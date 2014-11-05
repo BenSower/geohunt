@@ -37,7 +37,7 @@ function mysqlConnect(tunnel){
 		var rows = mysqlQuery(connection, 
 								query, 
 								function(rows) {
-									console.log("Return value is: \n" + rows[0].solution);
+									console.log("Number of uploaded videos is: " + rows[0].solution);
 								});
 		
 		connection.end();
