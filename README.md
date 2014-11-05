@@ -18,7 +18,7 @@ Mysql Query starting
 connected to DB mediaq.dbs.ifi.lmu.de
 closing tunnel
 Return value is: 
-84
+Number of unique videos is: 84
 ssh::end
 ```
 7. Open a browser on http://localhost:3000
