@@ -35,17 +35,17 @@ MysqlConnector.prototype.connectSSHTunnel = function (callback){
 */
 MysqlConnector.prototype.connectMysql = function (callback){
     var self = this;
-	//initializes connection, does not actually connect it
+	//initializes connection, but does not actually connect it
 	self.connection = mysql.createConnection(config.database);
 
-	console.log("Mysql Query starting");
+	console.log("Trying to connect to Mysql DB...");
 	//actually establishes a connection to the mysql-db
 	self.connection.connect(function(err) {
 		if (err) {
 		  console.error('error connecting: ' + err.stack);
 		  return;
 		}
-		console.log('Connected to DB ' + config.remoteHost);
+		console.log('Connected to Mysql DB on ' + config.remoteHost);
 		callback();
 	});
 };
@@ -56,7 +56,7 @@ MysqlConnector.prototype.connectMysql = function (callback){
 MysqlConnector.prototype.query = function (query, callback){
     var self = this;
     if (self.connection == undefined){
-    	console.log("connection not yet established");
+    	console.log("connection not yet established, waiting and trying again");
     	return;
     }
 	self.connection.query(query, function(err, rows, fields) {
