@@ -4,11 +4,11 @@ var MysqlTunnel = require ('./mysqlTunnelModule');
 var tunnel = new MysqlTunnel();
 
 //waits and fires a test query
-setTimeout(test, 3000);
+test();
 function test(){
     var query = "SELECT count(*) AS solution FROM MediaQ_V2.VIDEO_INFO;";
     var rows = tunnel.query(query,function(rows) {
             console.log("Current number of uploaded videos is: " + rows[0].solution);
-    });
+    },10);
 }
 

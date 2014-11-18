@@ -53,11 +53,21 @@ MysqlConnector.prototype.connectMysql = function (callback){
 /*
 * returns @rows selected by @query
 */
-MysqlConnector.prototype.query = function (query, callback){
+MysqlConnector.prototype.query = function (query, callback, maxRetries, retry){
     var self = this;
-    if (self.connection == undefined){
-    	console.log("connection not yet established, waiting and trying again");
-    	return;
+    retry = (retry == undefined) ? 1 : retry;
+    maxRetries = (maxRetries == undefined) ? 10 : maxRetries;
+
+    if (self.connection == undefined && retry <= maxRetries){
+    	console.log("Connection not yet established, waiting and trying again. Attempt :" + retry + "/" +maxRetries);
+    	setTimeout(function() {
+            self.query(query, callback, maxRetries, retry +1);
+        }, 3000);
+        return;
+    }
+    else if (self.connection == undefined && retry >= maxRetries) {
+    	console.log("Connection could not be established, quitting");
+	   	return;
     }
 	self.connection.query(query, function(err, rows, fields) {
 		  if (err) throw err;
@@ -69,9 +79,14 @@ MysqlConnector.prototype.query = function (query, callback){
 * closes the connection
 */
 MysqlConnector.prototype.close = function () {
-		this.connection.end();
-		console.log("closing tunnel");
-		this.tunnel.close();
+	var self = this;
+	if (self.connection == undefined){
+		console.log("connection not yet established, cannot close it");
+		return;
+	}
+	self.connection.end();
+	console.log("closing tunnel");
+	self.tunnel.close();
 }
 
 
