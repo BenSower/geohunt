@@ -12,15 +12,16 @@ Installation:
 4. run ```npm install``` to download and install all necessary dependencies 
 5. Fill in all needed information in config.js
 6. run ```npm start```
+7. check http://localhost:3000 if you can see something like "Mediaquery v 1.0"
+8. stop the server (e.g. by pressing "ctrl + c" in the terminal/console
+9. run ```node backend/main.js```
 This will create an output similar to this one
 ```
-starting tunnel
-tunnel connected
-Mysql Query starting
-connected to DB mediaq.dbs.ifi.lmu.de
-closing tunnel
-Return value is: 
-Number of unique videos is: 84
-ssh::end
+Creating ssh tunnel to remote.cip.ifi.lmu.de
+Connection not yet established, waiting and trying again. Attempt :1/10
+Tunnel connected
+Trying to connect to Mysql DB...
+Connected to Mysql DB on mediaq.dbs.ifi.lmu.de
+Current number of uploaded videos is: 129
 ```
 (at the moment, mediaQuery only prints the number of unique, uploaded videos in the MySQL database to the console)
