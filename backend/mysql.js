@@ -15,7 +15,7 @@ mysqlTunnel.connect(function (err) {
 	}
 	console.log("tunnel connected");
     //call query function
-	mysqlConnect(mysqlTunnel);    
+	//mysqlConnect(mysqlTunnel);    
 });
 
 
