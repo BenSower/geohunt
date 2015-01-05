@@ -29,20 +29,3 @@ var map = new ol.Map({
     })
 });
 
-var projectionSelect = new ol.dom.Input(document.getElementById('projection'));
-projectionSelect.bindTo('value', mousePositionControl, 'projection')
-    .transform(
-        function(code) {
-            // projectionSelect.value -> mousePositionControl.projection
-            return ol.proj.get( /** @type {string} */ (code));
-        },
-        function(projection) {
-            // mousePositionControl.projection -> projectionSelect.value
-            return projection.getCode();
-        });
-
-var precisionInput = document.getElementById('precision');
-precisionInput.addEventListener('change', function() {
-    var format = ol.coordinate.createStringXY(precisionInput.valueAsNumber);
-    mousePositionControl.setCoordinateFormat(format);
-}, false);
