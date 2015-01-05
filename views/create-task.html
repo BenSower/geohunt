@@ -47,23 +47,11 @@
         })
       });
       
-      var projectionSelect = new ol.dom.Input(document.getElementById('projection'));
-projectionSelect.bindTo('value', mousePositionControl, 'projection')
-  .transform(
-    function(code) {
-      // projectionSelect.value -> mousePositionControl.projection
-      return ol.proj.get(/** @type {string} */ (code));
-    },
-    function(projection) {
-      // mousePositionControl.projection -> projectionSelect.value
-      return projection.getCode();
-    });
-
-var precisionInput = document.getElementById('precision');
-precisionInput.addEventListener('change', function() {
-  var format = ol.coordinate.createStringXY(precisionInput.valueAsNumber);
-  mousePositionControl.setCoordinateFormat(format);
-}, false);
+map.on('singleclick', function(evt){
+    var coord = evt.coordinate;
+	var transformed_coordinate = ol.proj.transform(coord, "EPSG:900913", "EPSG:4326");
+	console.log(transformed_coordinate);
+});
     </script>
     <div class="custom-mouse-position"></div> 
     <div>Rätsel <textarea></textarea></div>
