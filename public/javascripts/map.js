@@ -1,6 +1,6 @@
 'use strict';
 var mousePositionControl = new ol.control.MousePosition({
-    coordinateFormat: ol.coordinate.createStringXY(4),
+    coordinateFormat: ol.coordinate.createStringXY(16),
     projection: 'EPSG:4326',
     // comment the following two lines to have the mouse position
     // be placed within the map.
@@ -29,9 +29,33 @@ var map = new ol.Map({
     })
 });
 
-map.on('singleclick', function(evt){
+map.on('singleclick', function(evt) {
     var coord = evt.coordinate;
     var transformed_coordinate = ol.proj.transform(coord, "EPSG:900913", "EPSG:4326");
-    console.log(transformed_coordinate);
+
+    var lon = transformed_coordinate[0],
+        lat = transformed_coordinate[1];
+
+    document.getElementById('lon').value = lon;
+    document.getElementById('lat').value = lat;
 });
 
+document.getElementById('submitButton').addEventListener("click", function(event) {
+    var location = [$('#lon').val(), $('#lat').val()],
+        riddleText = $('#riddleText').val(),
+        hints = [$('#hint1').val(), $('#hint2').val()];
+
+    console.log(location);
+
+    $.post("/api/create", {
+        "taskName": "<dummy>",
+        "userId": "<dummy>",
+        "completeCount": 0,
+        "assignCount": 0,
+        "location": location,
+        "riddleText": riddleText,
+        "hints": hints
+    }, function(data) {
+        console.log(data);
+    }, "json");
+});
