@@ -7,7 +7,7 @@ module.exports = {
         	host: 'remote.cip.ifi.lmu.de', 
             port: 22,
             username: 'sauerb',
-            password: '***REMOVED***', // option see ssh2 config,
+            password: '', // option see ssh2 config,
         },
         database: {
            host: "127.0.0.1",
