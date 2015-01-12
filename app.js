@@ -48,7 +48,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/bower_components', express.static(__dirname + '/bower_components'));
 app.use('/', index);
 app.use('/mobile', mobile);
-app.use('/api', api);
+app.use('/user', api);
 
 
 // catch 404 and forward to error handler

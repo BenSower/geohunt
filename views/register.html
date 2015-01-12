@@ -10,9 +10,15 @@
       <% include includes/header.html%>
 
       <div class="jumbotron">
-      	<div>Username <input type="text"/></div>
-      	<div>Passwort <input type="text"/></div>
-      	<input type="submit" text="login"/>      	
+        <form id="form1" method="post" action="/user/register" enctype="application/x-www-form-urlencoded">
+                <div class="input">Username:
+                    <input id="user" type="text" name="username" />
+                </div>
+                <div class="input">Passwort:
+                    <input id="passwort" type="password" name="password" />
+                </div>
+                <input type="submit" text="login" />
+            </form>
       </div>
 
 
