@@ -1,0 +1,27 @@
+{
+  "name": "mediaquery",
+  "version": "1.0.0",
+  "homepage": "https://github.com/BenSower/mediaquery",
+  "authors": [
+    "BenSower <sauer.benjamin@gmail.com>"
+  ],
+  "description": "Best mediaQ app ever",
+  "main": "app.js",
+  "keywords": [
+    "mediaq",
+    "mongodb",
+    "bootstrap"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.1"
+  }
+}
