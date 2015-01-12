@@ -9,9 +9,9 @@ router.get('/', function(req, res) {
 });
 
 router.post('/', 
-	passport.authenticate('local', { failureRedirect: '/' }),
+	passport.authenticate('local', { failureRedirect: '/desktop' }),
     function(req, res) {
-        res.redirect('/desktop/create-task');
+        res.redirect('/desktop/start');
     });
 
 router.get('/register', function(req, res) {
