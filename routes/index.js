@@ -9,6 +9,10 @@ router.get('/', function(req, res) {
     res.render('index');
 });
 
+router.get('/about', ensureAuthenticated, function(req, res) {
+  res.render('about', { loggedIn: 'true'});
+});
+
 router.get('/login', function(req, res) {
     res.render('login');
 });

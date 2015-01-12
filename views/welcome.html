@@ -1,7 +1,25 @@
-<% include includes/head.html %>
-    <body>
-        <h>GeoHunt v 1.0</h>
-        <div>Mobiler welcome screen</div>
-        <a href="/mobile/group">Gruppenspiel</a>
-        <a href="/mobile/game">Alleine spielen</a>
-<% include includes/foot.html %>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <% include includes/head.html %>
+</head>
+
+<body>
+
+    <div class="container">
+            <% include includes/header.html%>
+        <div class="jumbotron">
+        <h3>Willkomen zur Schnitzeljagd</h3>
+        <p><a class="btn btn-lg btn-success" href="/mobile/group" role="button">Gruppenspiel</a></p>
+        <p><a class="btn btn-lg btn-success" href="/mobile/game" role="button">Alleine spielen</a></p>
+        </div>
+        <% include includes/foot.html %>
+
+
+    </div>
+    <!-- /container -->
+
+</body>
+
+</html>

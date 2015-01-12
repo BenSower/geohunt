@@ -51,6 +51,16 @@ nav{
 	vertiacal-align: bottom;
 }
 
+#pirate{
+	margin-left: -100px;
+	float: left;
+}
+
+#puzzle{
+	margin-top: 50px;
+	min-height: 250px;
+}
+
 @media (max-device-width: 480px) {
 	body{
 	padding: 0;

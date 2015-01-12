@@ -15,5 +15,6 @@ module.exports = {
            user: "student",
            password: "***REMOVED***",
            database: "MediaQ_V2"
-       }
+       },
+       sessionSecret : "flkdfkföldrfkö"
 };
