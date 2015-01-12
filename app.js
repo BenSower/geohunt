@@ -10,7 +10,6 @@ var express = require('express'),
 
 //Includes
 var index = require('./routes/index'),
-    desktop = require('./routes/desktop'),
     mobile = require('./routes/mobile'),
     api = require('./routes/api');
 
@@ -43,7 +42,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/bower_components', express.static(__dirname + '/bower_components'));
 
 app.use('/', index);
-app.use('/desktop', desktop);
 app.use('/mobile', mobile);
 app.use('/api', api);
 
