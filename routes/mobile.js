@@ -3,9 +3,6 @@ var express = require('express'),
     router = express.Router(),
     ensureAuthenticated = require('../backend/PassportHelper').ensureAuthenticated;
 
-
-var parameters = { loggedIn: 'false'};
-
 /* GET home page. */
 router.get('/', ensureAuthenticated, function(req, res) {
     res.render('welcome');

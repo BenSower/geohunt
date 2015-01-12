@@ -1,21 +1,26 @@
 'use strict';
 
 var passport = require('passport'),
-    LocalStrategy = require('passport-local').Strategy;
-
-var user = {
-        'name': 'Hunter S. Thompson',
-        'id': '123123',
-        'password': '123Love'
-    };
+    LocalStrategy = require('passport-local').Strategy,
+    MongoClient = require('mongodb').MongoClient,
+    ObjectID = require('mongodb').ObjectID,
+    config = require('../config');
 
 function findById(id, fn) {
-
-    if (true) {
-        fn(null, user);
-    } else {
-        fn(new Error('User ' + id + ' does not exist'));
-    }
+    MongoClient.connect(config.mongodb.mongoUrl, function(err, db) {
+        if (err) throw err;
+        var collection = db.collection(config.mongodb.userTable);
+        collection.findOne({
+            '_id': new ObjectID(id)
+        }, function(err2, user) {
+            if (err) {
+                fn(null, null);
+                throw err;
+            }
+            db.close();
+            return fn(null, user);
+        });
+    });
 }
 
 
@@ -24,23 +29,31 @@ function findById(id, fn) {
 // indicate failure and set a flash message.  Otherwise, return the
 // authenticated `user`.
 function findByUsername(username, fn) {
-    if (username === user.name) {
-        return fn(null, user);
-    } else {
-        return fn(null, null);
-    }
+    MongoClient.connect(config.mongodb.mongoUrl, function(err, db) {
+        if (err) throw err;
+        var collection = db.collection(config.mongodb.userTable);
+        collection.findOne({
+            'username': username
+        }, function(err2, user) {
+            if (err) {
+                fn(null, null);
+                throw err;
+            }
+            db.close();
+            return fn(null, user);
+        });
+    });
 }
 
-function PassportHelper() {
-        var self = this;
-    }
-    // Passport session setup.
-    //   To support persistent login sessions, Passport needs to be able to
-    //   serialize users into and deserialize users out of the session.  Typically,
-    //   this will be as simple as storing the user ID when serializing, and finding
-    //   the user by ID when deserializing.
-PassportHelper.serializeUser = function(userObject, done) {
-    done(null, user.id);
+function PassportHelper() {}
+
+// Passport session setup.
+//   To support persistent login sessions, Passport needs to be able to
+//   serialize users into and deserialize users out of the session.  Typically,
+//   this will be as simple as storing the user ID when serializing, and finding
+//   the user by ID when deserializing.
+PassportHelper.serializeUser = function(user, done) {
+    done(null, user._id);
 };
 
 PassportHelper.deserializeUser = function(id, done) {
@@ -55,8 +68,10 @@ PassportHelper.deserializeUser = function(id, done) {
 //   the request will proceed.  Otherwise, the user will be redirected to the
 //   login page.
 PassportHelper.ensureAuthenticated = function(req, res, next) {
-  if (req.isAuthenticated()) { return next(); }
-  res.redirect('/login');
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    res.redirect('/login');
 };
 // Use the LocalStrategy within Passport.
 //   Strategies in passport require a `verify` function, which accept
