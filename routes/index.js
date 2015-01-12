@@ -3,13 +3,14 @@ var express = require('express'),
     router = express.Router(),
     passport = require('passport');
 
+var parameters = { loggedIn: 'false'};
 
 router.get('/', function(req, res) {
-    res.render('index');
+    res.render('index', parameters);
 });
 
 router.get('/login', function(req, res) {
-    res.render('login');
+    res.render('login', parameters);
 });
 
 router.post('/login', 
@@ -19,16 +20,16 @@ router.post('/login',
     });
 
 router.get('/register', function(req, res) {
-    res.render('register');
+    res.render('register', parameters);
 });
 
 router.get('/start', ensureAuthenticated, function(req, res) {
-  res.render('start');
+  res.render('start', { loggedIn: 'true'});
 });
 
 
 router.get('/create-task', ensureAuthenticated, function(req, res) {
-    res.render('create-task');
+    res.render('create-task', { loggedIn: 'true'});
 });
 
 router.get('/logout', ensureAuthenticated, function(req, res) {

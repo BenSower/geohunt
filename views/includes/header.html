@@ -5,7 +5,12 @@
             </li>
             <li role="presentation"><a href="/about">About</a>
             </li>
-            <li role="presentation"><a href="/login">Login</a>
+            <li role="presentation">
+                <% if(loggedIn == 'true'){ %>
+                    <a href="/logout">Logout</a>
+                <% } else{ %>
+                    <a href="/login">Login</a>
+                <% } %>
             </li>
         </ul>
     </nav>

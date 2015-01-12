@@ -1,6 +1,7 @@
 'use strict';
 
-var express = require('express'),
+var config = require('./config'),
+    express = require('express'),
     path = require('path'),
     logger = require('morgan'),
     cookieParser = require('cookie-parser'),
@@ -23,7 +24,11 @@ app.engine('html', require('ejs').renderFile);
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
-app.use(expressSession({secret: 'mySecretKey'}));
+app.use(expressSession({
+    secret: config.sessionSecret,
+    saveUninitialized: true,
+    resave: true
+}));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({

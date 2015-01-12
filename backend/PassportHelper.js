@@ -75,7 +75,6 @@ PassportHelper.authenticate = new LocalStrategy(
                 });
             }
             console.log('Correct Login. Booya!');
-
             return done(null, user);
         });
     }
