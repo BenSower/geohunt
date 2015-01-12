@@ -1,17 +1,25 @@
-var express = require('express');
-var router = express.Router();
+'use strict';
+var express = require('express'),
+    router = express.Router(),
+    passport = require('passport');
 
 
 router.get('/', function(req, res) {
-  res.render('login');
+    res.render('login');
 });
 
+router.post('/', 
+	passport.authenticate('local', { failureRedirect: '/' }),
+    function(req, res) {
+        res.redirect('/desktop/create-task');
+    });
+
 router.get('/register', function(req, res) {
-  res.render('register');
+    res.render('register');
 });
 
 router.get('/create-task', function(req, res) {
-  res.render('create-task');
+    res.render('create-task');
 });
 
 module.exports = router;
