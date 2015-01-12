@@ -36,7 +36,7 @@ router.get('/task/read', function(req, res) {
 });
 
 router.post('/register', function(req, res) {
-    console.log('registering new user: ' + req.body );
+    console.log('registering new user: ' + req.body.username );
     MongoClient.connect(config.mongodb.mongoUrl, function(err, db) {
         if (err) throw err;
         var collection = db.collection(config.mongodb.userTable);
