@@ -54,7 +54,7 @@ function PassportHelper() {}
 //   the user by ID when deserializing.
 PassportHelper.serializeUser = function(user, done) {
     done(null, user._id);
-};
+}; 
 
 PassportHelper.deserializeUser = function(id, done) {
     findById(id, function(err, user) {
