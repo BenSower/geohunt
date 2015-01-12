@@ -6,7 +6,7 @@
             <li role="presentation"><a href="/about">About</a>
             </li>
             <li role="presentation">
-                <% if(loggedIn == 'true'){ %>
+                <% if(typeof loggedIn != "undefined"){ %>
                     <a href="/logout">Logout</a>
                 <% } else{ %>
                     <a href="/login">Login</a>
