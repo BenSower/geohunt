@@ -1,6 +1,5 @@
 'use strict';
 
-//XXXXXXXXXXXXXXXXXXXXXXXXXX
 var passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy;
 
@@ -64,7 +63,7 @@ PassportHelper.authenticate = new LocalStrategy(
                 return done(err);
             }
             if (!user) {
-                console.log('User ' + username + 'does not exist');
+                console.log('User ' + username + ' does not exist');
                 return done(null, false, {
                     message: 'Unknown user ' + username
                 });
@@ -79,10 +78,9 @@ PassportHelper.authenticate = new LocalStrategy(
 
             return done(null, user);
         });
-    });
+    }
+);
 
-
-//XXXXXXXXXXXXXXXXXXXXXXXXXX
 
 
 

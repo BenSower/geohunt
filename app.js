@@ -6,7 +6,8 @@ var express = require('express'),
     cookieParser = require('cookie-parser'),
     bodyParser = require('body-parser'),
     passport = require('passport'),
-    PassportHelper = require('./backend/PassportHelper');
+    PassportHelper = require('./backend/PassportHelper'),
+    expressSession = require('express-session');
 
 //Includes
 var index = require('./routes/index'),
@@ -22,6 +23,7 @@ app.engine('html', require('ejs').renderFile);
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
+app.use(expressSession({secret: 'mySecretKey'}));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -32,15 +34,13 @@ app.use(cookieParser());
 //Initialize passport
 app.use(passport.initialize());
 app.use(passport.session());
-
 passport.use(PassportHelper.authenticate);
 passport.serializeUser(PassportHelper.serializeUser);
 passport.deserializeUser(PassportHelper.deserializeUser);
 
-
+//register static file paths
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/bower_components', express.static(__dirname + '/bower_components'));
-
 app.use('/', index);
 app.use('/mobile', mobile);
 app.use('/api', api);
