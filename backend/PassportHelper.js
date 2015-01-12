@@ -4,8 +4,7 @@
 var passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy;
 
-var userExists = true,
-    user = {
+var user = {
         'name': 'Hunter S. Thompson',
         'id': '123123',
         'password': '123Love'
@@ -13,7 +12,7 @@ var userExists = true,
 
 function findById(id, fn) {
 
-    if (userExists) {
+    if (true) {
         fn(null, user);
     } else {
         fn(new Error('User ' + id + ' does not exist'));
@@ -26,7 +25,7 @@ function findById(id, fn) {
 // indicate failure and set a flash message.  Otherwise, return the
 // authenticated `user`.
 function findByUsername(username, fn) {
-    if (userExists) {
+    if (username === user.name) {
         return fn(null, user);
     } else {
         return fn(null, null);
@@ -65,7 +64,7 @@ PassportHelper.authenticate = new LocalStrategy(
                 return done(err);
             }
             if (!user) {
-                console.log('User' + username + 'does not exist');
+                console.log('User ' + username + 'does not exist');
                 return done(null, false, {
                     message: 'Unknown user ' + username
                 });

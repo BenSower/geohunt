@@ -8,11 +8,17 @@ router.get('/', function(req, res) {
     res.render('login');
 });
 
-router.post('/', 
+router.post('/login', 
 	passport.authenticate('local', { failureRedirect: '/desktop' }),
     function(req, res) {
         res.redirect('/desktop/start');
     });
+
+router.get('/logout', function(req, res) {
+      req.logout();
+      res.redirect('/');
+});
+
 
 router.get('/register', function(req, res) {
     res.render('register');
