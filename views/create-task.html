@@ -1,46 +1,92 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+	<link rel="stylesheet" href="http://openlayers/en/v3.1.1/css/ol.css" type="text/css"/>
+	<link rel="stylesheet" type="text/css" href="/stylesheets/style.css">
+	<style>
+	
+	.map{
+	height:400px;
+	}
+	</style>
+	<script src="http://openlayers.org/en/v3.1.1/build/ol.js" type="text/javascript"></script>
 
-<head>
-    <title>MediaQ Query tool</title>
-    <link rel="stylesheet" type="text/css" href="/stylesheets/style.css">
-    <link rel="stylesheet" href="http://openlayers.org/en/v3.1.1/css/ol.css" type="text/css">
-    <style>
-    .map {
-        height: 400px;
-        width: 400px;
-    }
-    </style>
-    <script src="http://openlayers.org/en/v3.1.1/build/ol.js" type="text/javascript"></script>
-</head>
+    <title>GeoHunt</title>
 
-<body>
-    <form>
-        <div class="logo"><img src="/images/logo.jpg" />
-        </div>
+    <!-- Bootstrap core CSS -->
+    <link href="/bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
 
-        <div id="map" class="map"></div>
-        <div id="mouse-position">Location:</div>
+    <!-- Custom styles for this template -->
+    <link href="jumbotron-narrow.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="bower_components/assets/js/ie-emulation-modes-warning.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <div class="container">
+      <div class="header">
+        <nav>
+          <ul class="nav nav-pills pull-right">
+            <li role="presentation" ><a href="/">Home</a></li>
+            <li role="presentation"><a href="#">About</a></li>
+            <li role="presentation"><a href="desktop">Login</a></li>
+          </ul>
+        </nav>
+        <img src="/images/logo.jpg"/>  
+      </div>
+
+      <div class="jumbotron">
+		<div id="map" class="map"></div>	
+      </div>
+      
+      <div class="row marketing">
+        <div class="col-lg-6">
+ 		<div id="mouse-position">Location:</div>
         <form action="input_text.htm">
-            <p>
+            <p class="longlat">
                 Longitude:
-                <input id="lon" type="text" size="30" maxlength="30"> Latitude:
+                <input id="lon" type="text" size="30" maxlength="30"> </p>
+            <p class="longlat">
+                Latitude:
                 <input id="lat" type="text" size="30" maxlength="40">
             </p>
         </form>
-        <div >Rätsel
-            <textarea id='riddleText' ></textarea>
         </div>
-        <div>Hint1
-            <textarea id='hint1' ></textarea>
+
+        <div class="col-lg-6">
+        <div class="riddle">Rätsel:
+            <textarea id='riddleText' rows="5"></textarea>
         </div>
-        <div>Hint2
-            <textarea id='hint2' ></textarea>
+        <div class="riddle">Hint1:
+            <textarea id='hint1' rows="5"></textarea>
+        </div>
+        <div class="riddle">Hint2:
+            <textarea id='hint2' rows="5"></textarea>
         </div>
 
 
-        <input id="submitButton" type="submit" value="Submit"></input>
+        <div class="submit"><input id="submitButton" type="submit" value="Submit"></input></div>
+        </div>
+      </div>
+
+        
+       
+
     </form>
     </br>
     </br>
@@ -51,9 +97,18 @@
     Hint#1: Die grüne Lunge Münchens ist eine Oase der Ruhe für viele Münchner.</br>
     Hint#2: Bier erhält man hier nur an neun Monaten im Jahr. Dafür an einem weiteren Glühwein.</br>
     Lösung: Biergarten Chinesischer Turm im Englischen Garten
-    </div>
-</body>
-<script src="/javascripts/map.js" type="text/javascript"></script>
-<script src="/javascripts/jquery-2.1.3.min.js" type="text/javascript"></script>
+    </div> 
 
+      <footer class="footer">
+        		powered by:<a href="http://mediaqv3.cloudapp.net/home/"> <img src="/images/mediaq.png" width="100"/></a>
+      </footer>
+
+    </div> <!-- /container -->
+
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+    <script src="/javascripts/map.js" type="text/javascript"></script>
+<script src="/javascripts/jquery-2.1.3.min.js" type="text/javascript"></script>
+  </body>
 </html>

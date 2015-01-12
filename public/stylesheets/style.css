@@ -6,3 +6,57 @@ body {
 a {
   color: #00B7FF;
 }
+
+.input{
+	width: 245px;
+	height:50px;
+}
+
+.riddle{
+width: 80%;
+height: 131px;
+}
+
+#user, #passwort, #riddleText, #hint1, #hint2, #submitButton, #lon, #lat{
+	float:right;
+}
+
+#riddleText, #hint1, #hint2{
+	width: 99%;
+}
+
+.submit{
+	width: 80%;
+}
+
+.footer{
+	padding-top: 10px;
+}
+
+.jumbotron img{
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.longlat{
+	width: 300px;
+}
+
+.header img{
+	margin-bottom: 10px;
+}
+
+nav{
+	vertiacal-align: bottom;
+}
+
+@media (max-device-width: 480px) {
+	body{
+	padding: 0;
+	}
+	
+	.header img{
+	width: 50%;
+}
+}

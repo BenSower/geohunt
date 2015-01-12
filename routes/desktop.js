@@ -14,4 +14,8 @@ router.get('/create-task', function(req, res) {
   res.render('create-task');
 });
 
+router.get('/start', function(req, res) {
+  res.render('start');
+});
+
 module.exports = router;
