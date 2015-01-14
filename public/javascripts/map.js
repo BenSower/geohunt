@@ -40,14 +40,14 @@ map.on('singleclick', function(evt) {
     document.getElementById('lat').value = lat;
 });
 
-document.getElementById('submitButton').addEventListener('click', function(event) {
+$('#submitButton').click(function(event) {
     var location = [$('#lon').val(), $('#lat').val()],
         riddleText = $('#riddleText').val(),
         hints = [$('#hint1').val(), $('#hint2').val()];
 
     console.log(location);
 
-    $.post('/api/task/create', {
+    $.post('/user/task/create', {
         'taskName': '<dummy>',
         'userId': '<dummy>',
         'completeCount': 0,

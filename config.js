@@ -21,6 +21,7 @@ module.exports = {
         mongoUrl : 'mongodb://localhost:27017/mediaquery',
         userTable : 'users',
         taskTable : 'tasks',
-        groupTable : 'groups'
+        groupTable : 'groups',
+        gameTable : 'games'
     }
 };
