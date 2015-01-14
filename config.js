@@ -13,12 +13,12 @@ module.exports = {
         host: '127.0.0.1',
         port: 31337,
         user: 'student',
-        password: '***REMOVED***',
+        password: '',
         database: 'MediaQ_V2'
     },
     sessionSecret: 'flkdfkföldrfkö',
     mongodb: {
-        mongoUrl : 'mongodb://localhost:27017/mediaquery',
+        mongoUrl : 'mongodb://localhost/mediaquery',
         userTable : 'users',
         taskTable : 'tasks',
         groupTable : 'groups',
