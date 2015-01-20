@@ -160,7 +160,7 @@ function getAllTasks(lon, lat, cb) {
           				'type' : 'Point' , 
           				'coordinates' :  [ lon, lat ] 
           			},
-          		  $maxDistance : 15000 
+          		  $maxDistance : 5000 
           		}
           	}
           }).toArray(function(err, tasks) {
@@ -188,6 +188,15 @@ function getTasksForLocation(lon, lat, cb) {
         }
         cb(taskList);
     });
+}
+
+function getRiddleforId (id, db){
+	var collection = db.collection(config.mongodb.taskTable);
+         collection.find( 
+          {  
+          '_id' : id 
+          }
+          	);
 }
 
 function shuffle(o) {

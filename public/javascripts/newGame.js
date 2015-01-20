@@ -22,9 +22,14 @@ $('#singleGameButton').click(function(event) {
             'user': 'dummy'
         }, function(data) {
             alert('Game id: ' + data);
+            setCookie ('game-id', data);
         	window.location = href;
         }, 'json');
     }
+    
+    function setCookie(cname,  data) {
+    	document.cookie = cname + "=" + data + "; ";
+	}
 
 
     //getLocation, send it to server and create new game
