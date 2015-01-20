@@ -3,6 +3,7 @@ var MongoClient = require('mongodb').MongoClient,
     config = require('../config'),
     format = require('util').format,
     express = require('express'),
+    ObjectID = require('mongodb').ObjectID,
     router = express.Router();
 
 
@@ -60,7 +61,7 @@ router.post('/game/createHunt', function(req, res) {
                 var newGame = {
                     'user': user,
                     'tasks': tasks,
-                    'completed': 0
+                    'index': -1
                 };
                 if (err) throw err;
                 var gameTableConnection = db.collection(config.mongodb.gameTable);
@@ -75,6 +76,48 @@ router.post('/game/createHunt', function(req, res) {
 
     });
 });
+
+
+router.get('/game/getActiveTask/:gameId', function(req, res) {
+    MongoClient.connect(config.mongodb.mongoUrl, function(err, db) {
+        if (err) throw err;
+        var id = req.param('gameId'),
+            collection = db.collection(config.mongodb.gameTable);
+
+        collection.findOne({
+            '_id' : new ObjectID(id)
+        }, function(err, game) {
+            if (err) throw err;
+            res.json({
+                'msg': 'ok',
+                'task': game.tasks[game.index]
+            });
+            db.close();
+        });
+    });
+});
+
+router.get('/game/taskComplete/:gameId', function(req, res) {
+    MongoClient.connect(config.mongodb.mongoUrl, function(err, db) {
+        var id = req.param('gameId'),
+            collection = db.collection(config.mongodb.gameTable);
+        collection.update({
+            '_id': new ObjectID(id)
+        }, {
+            $inc: {
+                'index': 1
+            }
+        }, function(err, result) {
+            if (err) throw err;
+            console.log('Successfully incremented index of game ' + id);
+            res.json({
+                'msg': 'ok'
+            });
+            db.close();
+        });
+    });
+});
+
 
 function getAllTasks(cb) {
     MongoClient.connect(config.mongodb.mongoUrl, function(err, db) {
