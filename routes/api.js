@@ -100,8 +100,6 @@ router.post('/game/createHunt', function(req, res) {
     });
 });
 
-<<<<<<< HEAD
-
 router.get('/game/getActiveTask/:gameId', function(req, res) {
     MongoClient.connect(config.mongodb.mongoUrl, function(err, db) {
         if (err) throw err;
@@ -112,6 +110,8 @@ router.get('/game/getActiveTask/:gameId', function(req, res) {
             '_id' : new ObjectID(id)
         }, function(err, game) {
             if (err) throw err;
+            var riddle = getRiddleForId(game.tasks[game.index]._id, db);
+            console.log(game.tasks[game.index]._id);
             res.json({
                 'msg': 'ok',
                 'task': game.tasks[game.index]
@@ -143,12 +143,9 @@ router.get('/game/taskComplete/:gameId', function(req, res) {
 });
 
 
-function getAllTasks(cb) {
-=======
 function getAllTasks(lon, lat, cb) {
 	console.log(lon);
 	console.log(lat);
->>>>>>> FETCH_HEAD
     MongoClient.connect(config.mongodb.mongoUrl, function(err, db) {
         if (err) throw err;
         var collection = db.collection(config.mongodb.geoTable);
@@ -190,7 +187,7 @@ function getTasksForLocation(lon, lat, cb) {
     });
 }
 
-function getRiddleforId (id, db){
+function getRiddleForId (id, db){
 	var collection = db.collection(config.mongodb.taskTable);
          collection.find( 
           {  

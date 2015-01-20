@@ -1,5 +1,5 @@
 'use strict';
-$('#singleGameButton').click(function(event) {
+$('#gameButton').click(function(event) {
 
 	var href = '/mobile/game';
 
