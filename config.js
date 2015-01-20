@@ -22,6 +22,7 @@ module.exports = {
         userTable : 'users',
         taskTable : 'tasks',
         groupTable : 'groups',
-        gameTable : 'games'
+        gameTable : 'games',
+        geoTable : 'poi'
     }
 };
