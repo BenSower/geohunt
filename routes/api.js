@@ -10,18 +10,41 @@ router.post('/task/create', function(req, res) {
     console.log('Adding ' + req.body.taskName + ' with location ' + req.body.location + ' to db');
     MongoClient.connect(config.mongodb.mongoUrl, function(err, db) {
         if (err) throw err;
-
+		console.log(req.body);
         var collection = db.collection(config.mongodb.taskTable);
-        collection.insert(req.body, function(err, docs) {
-            if (err) throw err;
-            res.json({
-                'status': 'ok',
-                '_id': docs[0]._id
-            });
-            db.close();
+        collection.insert({ 
+        	taskName: req.body.taskName ,
+		 	userId: req.body.userId,
+		  	completeCount: req.body.completeCount,
+		  	assignCount: req.body.assignCount,
+		  	riddleText: req.body.riddleText,
+		  	hints: req.body.hints }, function(err, docs) {
+            	if (err) throw err;
+            	insertGeoData(req.body.location, docs[0]._id, db);
         });
+        
     });
 });
+
+function insertGeoData (location, id, db){
+		console.log(location, id);	
+	    var collection = db.collection(config.mongodb.geoTable);
+        collection.ensureIndex({"location" : "2dsphere"}, function(err){
+        	if (err) throw err;
+        });
+        var lon = parseFloat(location[0]);
+        var lat = parseFloat(location[1]);
+        console.log(lon, lat);
+        collection.insert({ 
+        	'name' : id,
+        	'location': {'type': 'Point', 'coordinates' : [lon, lat], 'category' : 'task'}
+			}, function(err, doc) {
+				console.log (doc);
+				if (err) throw err;
+				db.close();
+        });
+
+}
 
 router.get('/task/read', function(req, res) {
     getAllTasks(function(tasks) {
@@ -47,8 +70,8 @@ router.post('/game/createHunt', function(req, res) {
 
     MongoClient.connect(config.mongodb.mongoUrl, function(err, db) {
 
-        var lon = req.body.lon,
-            lat = req.body.lat,
+        var lon = parseFloat(req.body.lon),
+            lat = parseFloat(req.body.lat),
             user = req.body.user;
 
 
@@ -76,12 +99,26 @@ router.post('/game/createHunt', function(req, res) {
     });
 });
 
-function getAllTasks(cb) {
+function getAllTasks(lon, lat, cb) {
+	console.log(lon);
+	console.log(lat);
     MongoClient.connect(config.mongodb.mongoUrl, function(err, db) {
         if (err) throw err;
-        var collection = db.collection(config.mongodb.taskTable);
-        collection.find({}).toArray(function(err2, tasks) {
+        var collection = db.collection(config.mongodb.geoTable);
+         collection.find( 
+          {  'location' : 
+          	{ $near : 
+          		{ $geometry : 
+          			{ 
+          				'type' : 'Point' , 
+          				'coordinates' :  [ lon, lat ] 
+          			},
+          		  $maxDistance : 15000 
+          		}
+          	}
+          }).toArray(function(err, tasks) {
             if (err) throw err;
+            console.log(tasks);
             db.close();
             cb(tasks);
         });
@@ -91,7 +128,7 @@ function getAllTasks(cb) {
 //atm only randomly selects tasks and returns them
 //TODO: Do this with a correct algorithm based on lon and lat! 
 function getTasksForLocation(lon, lat, cb) {
-    getAllTasks(function(tasks) {
+    getAllTasks(lon, lat, function(tasks) {
         var taskList = [],
             numbers = [];
         for (var i = 0; i < tasks.length; i++) {
