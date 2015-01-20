@@ -100,7 +100,6 @@ router.post('/game/createHunt', function(req, res) {
     });
 });
 
-<<<<<<< HEAD
 
 router.get('/game/getActiveTask/:gameId', function(req, res) {
     MongoClient.connect(config.mongodb.mongoUrl, function(err, db) {
@@ -143,12 +142,10 @@ router.get('/game/taskComplete/:gameId', function(req, res) {
 });
 
 
-function getAllTasks(cb) {
-=======
+
 function getAllTasks(lon, lat, cb) {
 	console.log(lon);
 	console.log(lat);
->>>>>>> FETCH_HEAD
     MongoClient.connect(config.mongodb.mongoUrl, function(err, db) {
         if (err) throw err;
         var collection = db.collection(config.mongodb.geoTable);
