@@ -100,6 +100,7 @@ router.post('/game/createHunt', function(req, res) {
     });
 });
 
+
 router.get('/game/getActiveTask/:gameId', function(req, res) {
     MongoClient.connect(config.mongodb.mongoUrl, function(err, db) {
         if (err) throw err;
@@ -141,6 +142,7 @@ router.get('/game/taskComplete/:gameId', function(req, res) {
         });
     });
 });
+
 
 
 function getAllTasks(lon, lat, cb) {
