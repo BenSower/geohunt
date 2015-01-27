@@ -17,18 +17,17 @@ $('#gameButton').click(function(event) {
 
     	//send userId lon and lat to server
         $.post('/user/game/createHunt', {
-            'lon': position.coords.longitude,
-            'lat': position.coords.latitude,
+            'lon': lon,
+            'lat': lat,
             'user': 'dummy'
         }, function(data) {
-            alert('Game id: ' + data);
-            setCookie ('game-id', data);
+            setCookie ('gameId', data);
         	window.location = href;
         }, 'json');
     }
     
     function setCookie(cname,  data) {
-    	document.cookie = cname + "=" + data + "; ";
+    	document.cookie = cname + '=' + data + '; ';
 	}
 
 
