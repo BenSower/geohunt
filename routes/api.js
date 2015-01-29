@@ -112,10 +112,11 @@ router.get('/game/getActiveTask/:gameId', function(req, res) {
                 res.json({
                     'msg': 'ok',
                     'task': {
-                        taskName : task.taskName,
+                        id : task._id,
+                        taskName: task.taskName,
                         riddleText: task.riddleText,
                         hint1: task.hints[0],
-                        hint2:task.hints[1]
+                        hint2: task.hints[1]
                     }
                 });
             }
@@ -125,27 +126,57 @@ router.get('/game/getActiveTask/:gameId', function(req, res) {
     });
 });
 
-router.get('/game/taskComplete/:gameId', function(req, res) {
+router.post('/game/taskComplete/:gameId', function(req, res) {
     MongoClient.connect(config.mongodb.mongoUrl, function(err, db) {
-        var id = req.param('gameId'),
+        var gameId = req.param('gameId'),
             collection = db.collection(config.mongodb.gameTable);
-        collection.update({
-            '_id': new ObjectID(id)
-        }, {
-            $inc: {
-                'index': 1
-            }
-        }, function(err) {
-            if (err) throw err;
-            console.log('Successfully incremented index of game ' + id);
-            res.json({
-                'msg': 'ok'
+
+        if (req.body.isSkipping === 'true') {
+            collection.update({
+                '_id': new ObjectID(gameId)
+            }, {
+                $inc: {
+                    'index': 1
+                }
+            }, function(err) {
+                if (err) throw err;
+                console.log('Successfully incremented index of game ' + gameId);
+                res.json({
+                    'msg': 'ok'
+                });
+                db.close();
             });
-            db.close();
-        });
+        } else if (req.body.isSkipping === 'false' && req.body.location !== '' && req.body.taskId !== undefined){
+            findTaskById(req.body.taskId, function(task){
+                var lonPlayer = req.body.location.lon,
+                    latPlayer = req.body.location.lat;
+
+                var lonTask = task.location.coordinates[0],
+                    latTask = task.location.coordinates[1];
+                var distance = getDistanceFromLatLonInKm(lonPlayer, latPlayer, lonTask, latTask);
+                console.log('Location of Task: lon = ' +  lonTask + ' lat = ' + latTask);
+                console.log('Location of Player: lon = ' +  lonPlayer + ' lat = ' + latPlayer);
+                console.log('Distance to task: ' + distance + 'km');
+
+            });
+        }
+
     });
 });
 
+
+function findTaskById(id, cb){
+    MongoClient.connect(config.mongodb.mongoUrl, function(err, db) {
+        if (err) throw err;
+        var collection = db.collection(config.mongodb.taskTable),
+            query = {_id : new ObjectID(id)};
+        collection.findOne(query, function(err, task) {
+            if (err) throw err;
+            db.close();
+            cb(task);
+        });
+    });
+}
 
 
 function getAllTasks(lon, lat, cb) {
@@ -197,6 +228,25 @@ function getTasksForLocation(lon, lat, cb) {
 function shuffle(o) {
     for (var j, x, i = o.length; i; j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
     return o;
+}
+
+
+
+function getDistanceFromLatLonInKm(lon1,lat1,lon2, lat2) {
+  var R = 6371; // Radius of the earth in km
+  var dLat = deg2rad(lat2-lat1);  // deg2rad below
+  var dLon = deg2rad(lon2-lon1); 
+  var a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2); 
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+  var d = R * c; // Distance in km
+  return d;
+}
+
+function deg2rad(deg) {
+  return deg * (Math.PI/180);
 }
 
 

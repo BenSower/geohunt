@@ -2,6 +2,10 @@
 
 var gameId, activeTask, pirateCounter = 0;
 
+function setCookie(cname, data) {
+    document.cookie = cname + '=' + data + '; ';
+}
+
 function getCookie(cname) {
     var name = cname + '=';
     var ca = document.cookie.split(';');
@@ -14,11 +18,10 @@ function getCookie(cname) {
 }
 
 $(document).ready(function() {
-
     resetHintButtons();
     gameId = getCookie('gameId');
     //initial increment to Start the game
-    incrementGame();
+    incrementGame('true');
 
 });
 
@@ -34,7 +37,7 @@ function disableButton(button) {
     $(button).attr('disabled', true);
 }
 
-function resetHintButtons(){
+function resetHintButtons() {
     disableButton('#hint1-btn');
     disableButton('#hint2-btn');
     //1.5 sekunden
@@ -48,7 +51,7 @@ $('#skip').click(function() {
     $('#pirate' + pirateCounter).hide();
     pirateCounter++;
     $('#pirate' + pirateCounter).show();
-    incrementGame();
+    incrementGame('true');
 });
 
 
@@ -62,14 +65,31 @@ $('#hint2-btn').click(function() {
 });
 
 $('#done').click(function() {
-    $.getJSON('/user/game/taskComplete/' + gameId, function(data) {
-
-    });
+    incrementGame('false');
 });
 
-function incrementGame() {
+function incrementGame(isSkipping) {
+    var json = {
+        isSkipping: isSkipping,
+        location: null
+    };
+    if (isSkipping === 'false') {
+        getLocation(function(position) {
+            json.location = {
+                lon: position.coords.longitude,
+                lat: position.coords.latitude
+            };
+            console.log(json.location);
+            json.taskId = getCookie('activeTaskId');
+            postTaskComplete(json);
+        });
+    } else {
+        postTaskComplete(json);
+    }
+}
 
-    $.getJSON('/user/game/taskComplete/' + gameId, function(data) {
+function postTaskComplete(json) {
+    $.post('/user/game/taskComplete/' + gameId, json, function(data) {
         if (data.msg !== 'ok') {
             console.log('ERROR incrementing ');
         } else {
@@ -78,13 +98,22 @@ function incrementGame() {
                     $('#taskName').text(data.task.taskName);
                     $('#puzzle').text(data.task.riddleText);
                     activeTask = data.task;
+                    setCookie('activeTaskId', data.task.id);
                 } else if (data.msg === 'Game Over!') {
                     $('#puzzle').text(data.msg);
                     $('#skip').attr('disabled', true);
                 } else {
-                    console.log('ERROR incrementing getting first task');
+                    console.log('ERROR incrementing');
                 }
             });
         }
     });
+}
+
+function getLocation(cb) {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(cb);
+    } else {
+        console.log('Geolocation is not supported by this browser.');
+    }
 }
