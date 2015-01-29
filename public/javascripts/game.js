@@ -18,7 +18,8 @@ $(document).ready(function() {
     function enableButton1() {
         $('#hint1-btn').attr('disabled', false);
     }
-    setTimeout(enableButton1, 300000);
+    //15 sekunden
+    setTimeout(enableButton1, 15000);
 
     function enableButton2() {
         $('#hint2-btn').attr('disabled', false);
@@ -28,8 +29,8 @@ $(document).ready(function() {
         incrementGame();
     });
 
-
-    setTimeout(enableButton2, 600000);
+    //30 sekunden
+    setTimeout(enableButton2, 30000);
     gameId = getCookie('gameId');
     //initial increment to Start the game
     incrementGame();
@@ -46,10 +47,13 @@ function incrementGame() {
             console.log('ERROR incrementing ');
         } else {
             $.getJSON('/user/game/getActiveTask/' + gameId, function(data) {
-                if (data.msg !== 'ok') {
-                    console.log('ERROR incrementing getting first task');
-                } else {
+                if (data.msg === 'ok') {
                     $('#bubble').text(data.task.riddleText);
+                } else if (data.msg === 'Game Over!') {
+                    $('#bubble').text(data.msg);
+                    $('#skip').attr('disabled', true);
+                } else {
+                    console.log('ERROR incrementing getting first task');
                 }
             });
         }

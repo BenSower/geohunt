@@ -103,10 +103,19 @@ router.get('/game/getActiveTask/:gameId', function(req, res) {
         }, function(err, game) {
             if (err) throw err;
             //console.log(game.tasks[game.index]._id);
-            res.json({
-                'msg': 'ok',
-                'task': game.tasks[game.index]
-            });
+            if (game.index == 4) {
+                res.json({
+                    'msg': 'Game Over!'
+                });
+            } else {
+                res.json({
+                    'msg': 'ok',
+                    'task': {
+                        riddleText: game.tasks[game.index].riddleText
+                    }
+                });
+            }
+
             db.close();
         });
     });
@@ -151,7 +160,7 @@ function getAllTasks(lon, lat, cb) {
             }
         };
         console.log(query);
-       collection.find(query).toArray(function(err, tasks) {
+        collection.find(query).toArray(function(err, tasks) {
             if (err) throw err;
             db.close();
             cb(tasks);
@@ -164,7 +173,7 @@ function getAllTasks(lon, lat, cb) {
 function getTasksForLocation(lon, lat, cb) {
 
     getAllTasks(lon, lat, function(tasks) {
-        
+
         var taskList = [],
             numbers = [];
         for (var i = 0; i < tasks.length; i++) {
@@ -175,7 +184,7 @@ function getTasksForLocation(lon, lat, cb) {
         for (i = 0; i < 5; i++) {
             taskList[i] = tasks[numbers[i]];
         }
-       
+
         cb(taskList);
     });
 }
