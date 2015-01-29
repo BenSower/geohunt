@@ -1,6 +1,6 @@
 'use strict';
 
-var gameId;
+var gameId, activeTask, pirateCounter = 0;
 
 function getCookie(cname) {
     var name = cname + '=';
@@ -19,26 +19,36 @@ $(document).ready(function() {
         $('#hint1-btn').attr('disabled', false);
     }
     //15 sekunden
-    setTimeout(enableButton1, 15000);
+    setTimeout(enableButton1, 1500);
 
     function enableButton2() {
         $('#hint2-btn').attr('disabled', false);
     }
 
-    $('#skip').click(function() {
-        incrementGame();
-    });
-
     //30 sekunden
-    setTimeout(enableButton2, 30000);
+    setTimeout(enableButton2, 3000);
     gameId = getCookie('gameId');
     //initial increment to Start the game
     incrementGame();
 
 });
 
+$('#skip').click(function() {
+    $('#pirate' + pirateCounter).hide();
+    pirateCounter ++;
+    $('#pirate' + pirateCounter).show();
+    incrementGame();
+});
 
 
+$('#hint1-btn').click(function(){
+    $('#puzzle').append('<br/><br/>Tipp #1:' + activeTask.hint1);
+});
+
+
+$('#hint2-btn').click(function(){
+    $('#puzzle').append('<br/><br/>Tipp #2:' + activeTask.hint2);
+});
 
 function incrementGame() {
 
@@ -48,9 +58,11 @@ function incrementGame() {
         } else {
             $.getJSON('/user/game/getActiveTask/' + gameId, function(data) {
                 if (data.msg === 'ok') {
-                    $('#bubble').text(data.task.riddleText);
+                    $('#taskName').text(data.task.taskName);
+                    $('#puzzle').text(data.task.riddleText);
+                    activeTask = data.task;
                 } else if (data.msg === 'Game Over!') {
-                    $('#bubble').text(data.msg);
+                    $('#puzzle').text(data.msg);
                     $('#skip').attr('disabled', true);
                 } else {
                     console.log('ERROR incrementing getting first task');

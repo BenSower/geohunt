@@ -108,10 +108,14 @@ router.get('/game/getActiveTask/:gameId', function(req, res) {
                     'msg': 'Game Over!'
                 });
             } else {
+                var task = game.tasks[game.index];
                 res.json({
                     'msg': 'ok',
                     'task': {
-                        riddleText: game.tasks[game.index].riddleText
+                        taskName : task.taskName,
+                        riddleText: task.riddleText,
+                        hint1: task.hints[0],
+                        hint2:task.hints[1]
                     }
                 });
             }
