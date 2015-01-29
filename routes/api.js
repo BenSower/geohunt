@@ -1,7 +1,6 @@
 'use strict';
 var MongoClient = require('mongodb').MongoClient,
     config = require('../config'),
-    format = require('util').format,
     express = require('express'),
     ObjectID = require('mongodb').ObjectID,
     router = express.Router(),

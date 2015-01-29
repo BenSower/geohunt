@@ -15,39 +15,56 @@ function getCookie(cname) {
 
 $(document).ready(function() {
 
-    function enableButton1() {
-        $('#hint1-btn').attr('disabled', false);
-    }
-    //15 sekunden
-    setTimeout(enableButton1, 1500);
-
-    function enableButton2() {
-        $('#hint2-btn').attr('disabled', false);
-    }
-
-    //30 sekunden
-    setTimeout(enableButton2, 3000);
+    resetHintButtons();
     gameId = getCookie('gameId');
     //initial increment to Start the game
     incrementGame();
 
 });
 
+function enableButton1() {
+    $('#hint1-btn').attr('disabled', false);
+}
+
+function enableButton2() {
+    $('#hint2-btn').attr('disabled', false);
+}
+
+function disableButton(button) {
+    $(button).attr('disabled', true);
+}
+
+function resetHintButtons(){
+    disableButton('#hint1-btn');
+    disableButton('#hint2-btn');
+    //1.5 sekunden
+    setTimeout(enableButton1, 1500);
+    //3.0 sekunden
+    setTimeout(enableButton2, 3000);
+}
+
 $('#skip').click(function() {
+    resetHintButtons();
     $('#pirate' + pirateCounter).hide();
-    pirateCounter ++;
+    pirateCounter++;
     $('#pirate' + pirateCounter).show();
     incrementGame();
 });
 
 
-$('#hint1-btn').click(function(){
-    $('#puzzle').append('<br/><br/>Tipp #1:' + activeTask.hint1);
+$('#hint1-btn').click(function() {
+    $('#puzzle').append('<br/><br/>Tipp #1:<br/>' + activeTask.hint1);
 });
 
 
-$('#hint2-btn').click(function(){
-    $('#puzzle').append('<br/><br/>Tipp #2:' + activeTask.hint2);
+$('#hint2-btn').click(function() {
+    $('#puzzle').append('<br/><br/>Tipp #2:<br/>' + activeTask.hint2);
+});
+
+$('#done').click(function() {
+    $.getJSON('/user/game/taskComplete/' + gameId, function(data) {
+
+    });
 });
 
 function incrementGame() {
