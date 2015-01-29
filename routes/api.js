@@ -4,7 +4,8 @@ var MongoClient = require('mongodb').MongoClient,
     format = require('util').format,
     express = require('express'),
     ObjectID = require('mongodb').ObjectID,
-    router = express.Router();
+    router = express.Router(),
+    TASKS_PER_GAME = 4;
 
 
 router.post('/task/create', function(req, res) {
@@ -103,7 +104,7 @@ router.get('/game/getActiveTask/:gameId', function(req, res) {
         }, function(err, game) {
             if (err) throw err;
             //console.log(game.tasks[game.index]._id);
-            if (game.index == 4) {
+            if (game.index == TASKS_PER_GAME - 1) {
                 res.json({
                     'msg': 'Game Over!'
                 });
@@ -185,7 +186,7 @@ function getTasksForLocation(lon, lat, cb) {
         }
         numbers = shuffle(numbers);
 
-        for (i = 0; i < 5; i++) {
+        for (i = 0; i < TASKS_PER_GAME; i++) {
             taskList[i] = tasks[numbers[i]];
         }
 
