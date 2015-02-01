@@ -3,13 +3,14 @@ var MongoClient = require('mongodb').MongoClient,
     config = require('../config'),
     express = require('express'),
     ObjectID = require('mongodb').ObjectID,
+    mongoUrl = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || config.mongodb.mongoUrl,
     router = express.Router(),
     TASKS_PER_GAME = 4;
 
 
 router.post('/task/create', function(req, res) {
     console.log('Adding ' + req.body.taskName + ' with location ' + req.body.location + ' to db');
-    MongoClient.connect(config.mongodb.mongoUrl, function(err, db) {
+    MongoClient.connect(mongoUrl, function(err, db) {
         if (err) throw err;
         //console.log(req.body);
         var collection = db.collection(config.mongodb.taskTable);
@@ -45,7 +46,7 @@ router.post('/task/create', function(req, res) {
 
 router.post('/register', function(req, res) {
     console.log('registering new user: ' + req.body.username);
-    MongoClient.connect(config.mongodb.mongoUrl, function(err, db) {
+    MongoClient.connect(mongoUrl, function(err, db) {
         if (err) throw err;
         var collection = db.collection(config.mongodb.userTable);
         collection.insert(req.body, function(err, docs) {
@@ -59,7 +60,7 @@ router.post('/register', function(req, res) {
 
 router.post('/game/createHunt', function(req, res) {
 
-    MongoClient.connect(config.mongodb.mongoUrl, function(err, db) {
+    MongoClient.connect(mongoUrl, function(err, db) {
 
         var lon = parseFloat(req.body.lon),
             lat = parseFloat(req.body.lat),
@@ -93,7 +94,7 @@ router.post('/game/createHunt', function(req, res) {
 
 
 router.get('/game/getActiveTask/:gameId', function(req, res) {
-    MongoClient.connect(config.mongodb.mongoUrl, function(err, db) {
+    MongoClient.connect(mongoUrl, function(err, db) {
         if (err) throw err;
         var id = req.param('gameId'),
             collection = db.collection(config.mongodb.gameTable);
@@ -144,7 +145,7 @@ function incrementGame(db, gameId, cb) {
 }
 
 router.post('/game/taskComplete/:gameId', function(req, res) {
-    MongoClient.connect(config.mongodb.mongoUrl, function(err, db) {
+    MongoClient.connect(mongoUrl, function(err, db) {
         var gameId = req.param('gameId');
 
         if (req.body.isSkipping === 'true') {
@@ -187,7 +188,7 @@ router.post('/game/taskComplete/:gameId', function(req, res) {
 
 
 function findTaskById(id, cb) {
-    MongoClient.connect(config.mongodb.mongoUrl, function(err, db) {
+    MongoClient.connect(mongoUrl, function(err, db) {
         if (err) throw err;
         var collection = db.collection(config.mongodb.taskTable),
             query = {
@@ -203,7 +204,7 @@ function findTaskById(id, cb) {
 
 
 function getAllTasks(lon, lat, cb) {
-    MongoClient.connect(config.mongodb.mongoUrl, function(err, db) {
+    MongoClient.connect(mongoUrl, function(err, db) {
         if (err) throw err;
         var collection = db.collection(config.mongodb.taskTable);
         var query = {

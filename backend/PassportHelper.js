@@ -4,10 +4,11 @@ var passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy,
     MongoClient = require('mongodb').MongoClient,
     ObjectID = require('mongodb').ObjectID,
-    config = require('../config');
+    config = require('../config'),
+    mongoUrl = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || config.mongodb.mongoUrl;
 
 function findById(id, fn) {
-    MongoClient.connect(config.mongodb.mongoUrl, function(err, db) {
+    MongoClient.connect(mongoUrl, function(err, db) {
         if (err) throw err;
         var collection = db.collection(config.mongodb.userTable);
         collection.findOne({
@@ -29,7 +30,7 @@ function findById(id, fn) {
 // indicate failure and set a flash message.  Otherwise, return the
 // authenticated `user`.
 function findByUsername(username, fn) {
-    MongoClient.connect(config.mongodb.mongoUrl, function(err, db) {
+    MongoClient.connect(mongoUrl, function(err, db) {
         if (err) throw err;
         var collection = db.collection(config.mongodb.userTable);
         collection.findOne({
@@ -54,7 +55,7 @@ function PassportHelper() {}
 //   the user by ID when deserializing.
 PassportHelper.serializeUser = function(user, done) {
     done(null, user._id);
-}; 
+};
 
 PassportHelper.deserializeUser = function(id, done) {
     findById(id, function(err, user) {
