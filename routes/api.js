@@ -112,7 +112,7 @@ router.get('/game/getActiveTask/:gameId', function(req, res) {
                 res.json({
                     'msg': 'ok',
                     'task': {
-                        id : task._id,
+                        id: task._id,
                         taskName: task.taskName,
                         riddleText: task.riddleText,
                         hint1: task.hints[0],
@@ -126,38 +126,59 @@ router.get('/game/getActiveTask/:gameId', function(req, res) {
     });
 });
 
+//increments the task-counter of the active game
+function incrementGame(db, gameId, cb) {
+    var collection = db.collection(config.mongodb.gameTable);
+    collection.update({
+        '_id': new ObjectID(gameId)
+    }, {
+        $inc: { //increment game-index by 1
+            'index': 1
+        }
+    }, function(err) {
+        if (err) throw err;
+        console.log('Successfully incremented index of game ' + gameId);
+        db.close();
+        cb();
+    });
+}
+
 router.post('/game/taskComplete/:gameId', function(req, res) {
     MongoClient.connect(config.mongodb.mongoUrl, function(err, db) {
-        var gameId = req.param('gameId'),
-            collection = db.collection(config.mongodb.gameTable);
+        var gameId = req.param('gameId');
 
         if (req.body.isSkipping === 'true') {
-            collection.update({
-                '_id': new ObjectID(gameId)
-            }, {
-                $inc: {
-                    'index': 1
-                }
-            }, function(err) {
-                if (err) throw err;
-                console.log('Successfully incremented index of game ' + gameId);
+            incrementGame(db, gameId, function() {
                 res.json({
                     'msg': 'ok'
                 });
-                db.close();
             });
-        } else if (req.body.isSkipping === 'false' && req.body.location !== '' && req.body.taskId !== undefined){
-            findTaskById(req.body.taskId, function(task){
+        } else if (req.body.isSkipping === 'false' && req.body.location !== '' && req.body.taskId !== undefined) {
+            findTaskById(req.body.taskId, function(task) {
                 var lonPlayer = req.body.location.lon,
-                    latPlayer = req.body.location.lat;
+                    latPlayer = req.body.location.lat,
+                    accuracy = req.body.location.accuracy;
 
                 var lonTask = task.location.coordinates[0],
                     latTask = task.location.coordinates[1];
                 var distance = getDistanceFromLatLonInKm(lonPlayer, latPlayer, lonTask, latTask);
-                console.log('Location of Task: lon = ' +  lonTask + ' lat = ' + latTask);
-                console.log('Location of Player: lon = ' +  lonPlayer + ' lat = ' + latPlayer);
-                console.log('Distance to task: ' + distance + 'km');
-
+                console.log('Location of Task: lon = ' + lonTask + ' lat = ' + latTask);
+                console.log('Location of Player: lon = ' + lonPlayer + ' lat = ' + latPlayer + ' Accuracy: ' + accuracy);
+                console.log('Distance to task: ' + distance + ' km');
+                //accuracy > 6000 to allow computer based debugging...
+                if ((accuracy < 200 || accuracy > 6000) && distance < 0.2) {
+                    incrementGame(db, gameId, function() {
+                        res.json({
+                            'msg': 'Correct location'
+                        });
+                    });
+                    console.log('User found location');
+                } else {
+                    res.json({
+                        'msg': 'Incorrect location'
+                    });
+                    console.log('User wasn\'t close or accuracy not good enough! (' + accuracy + ')');
+                }
             });
         }
 
@@ -165,11 +186,13 @@ router.post('/game/taskComplete/:gameId', function(req, res) {
 });
 
 
-function findTaskById(id, cb){
+function findTaskById(id, cb) {
     MongoClient.connect(config.mongodb.mongoUrl, function(err, db) {
         if (err) throw err;
         var collection = db.collection(config.mongodb.taskTable),
-            query = {_id : new ObjectID(id)};
+            query = {
+                _id: new ObjectID(id)
+            };
         collection.findOne(query, function(err, task) {
             if (err) throw err;
             db.close();
@@ -232,21 +255,21 @@ function shuffle(o) {
 
 
 
-function getDistanceFromLatLonInKm(lon1,lat1,lon2, lat2) {
-  var R = 6371; // Radius of the earth in km
-  var dLat = deg2rad(lat2-lat1);  // deg2rad below
-  var dLon = deg2rad(lon2-lon1); 
-  var a = 
-    Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
-    Math.sin(dLon/2) * Math.sin(dLon/2); 
-  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-  var d = R * c; // Distance in km
-  return d;
+function getDistanceFromLatLonInKm(lon1, lat1, lon2, lat2) {
+    var R = 6371; // Radius of the earth in km
+    var dLat = deg2rad(lat2 - lat1); // deg2rad below
+    var dLon = deg2rad(lon2 - lon1);
+    var a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    var d = R * c; // Distance in km
+    return d;
 }
 
 function deg2rad(deg) {
-  return deg * (Math.PI/180);
+    return deg * (Math.PI / 180);
 }
 
 

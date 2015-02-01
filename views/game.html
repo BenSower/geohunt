@@ -6,31 +6,33 @@
 </head>
 
 <body>
-
     <div class="container">
+
         <% include includes/header.html%>
-            <div class="jumbotron" >
+            <div class="jumbotron">
                 <div class="row">
-                    <div class="col-md-6">
+                    <div id="pirateColumn" class="col-md-6 gameElements">
                         <img id="pirate0" src="/images/pirate_walking.gif" />
                         <img id="pirate1" src="/images/pirate_chopping.gif" style="display: none;" />
                         <img id="pirate2" src="/images/pirate_carry.gif" style="display: none;" />
                         <img id="pirate3" src="/images/pirate_opening.gif" style="display: none;" />
                     </div>
-                    <div class="col-md-6">
-                        <div class="well">
-                            <div id="taskName">Rätsel wird geladen!</div>
-                            <div id="puzzle" class="description"></div>
-                            <div id="hint1" class="description"></div>
-                            <div id="hint2" class="description"></div>
-                        </div>
+                    <div id='puzzleDesc' class="col-md-6 well gameElements">
+                        <div id="taskName">Rätsel wird geladen!</div>
+                        <div id="puzzle"></div>
+                        <div id="hint1"></div>
+                        <div id="hint2"></div>
                     </div>
                 </div>
+                <div class="alert alert-success row" role="alert" hidden></div>
+                <div class="alert alert-warning row" role="alert" hidden></div>
                 <div class="row">
-                    <button id="hint1-btn" class="btn btn-lg btn-success" disabled>Hint1</button>
-                    <button id="hint2-btn" class="btn btn-lg btn-success" disabled>Hint2</button>
-                    <button id="skip" class="btn btn-lg btn-success">Skip >></button>
-                    <button id="done" class="btn btn-lg btn-success">Done</button>
+                    <button id="hint1-btn" class="btn btn-lg btn-success gameElements" disabled>Hint1</button>
+                    <button id="hint2-btn" class="btn btn-lg btn-success gameElements" disabled>Hint2</button>
+                    <button id="skip" class="btn btn-lg btn-success gameElements">Skip >></button>
+                    <button id="done" class="btn btn-lg btn-success gameElements">Done</button>
+                    <button id="nextTask" class="btn btn-lg btn-success" style="display: none;">Next Task</button>
+                    <button id="tryAgain" class="btn btn-lg btn-success" style="display: none;">Try Again</button>
                 </div>
             </div>
             <% include includes/foot.html %>

@@ -22,7 +22,6 @@ $(document).ready(function() {
     gameId = getCookie('gameId');
     //initial increment to Start the game
     incrementGame('true');
-
 });
 
 function enableButton1() {
@@ -48,12 +47,15 @@ function resetHintButtons() {
 
 $('#skip').click(function() {
     resetHintButtons();
-    $('#pirate' + pirateCounter).hide();
-    pirateCounter++;
-    $('#pirate' + pirateCounter).show();
+    incrementPirate();
     incrementGame('true');
 });
 
+function incrementPirate() {
+    $('#pirate' + pirateCounter).hide();
+    pirateCounter++;
+    $('#pirate' + pirateCounter).show();
+}
 
 $('#hint1-btn').click(function() {
     $('#puzzle').append('<br/><br/>Tipp #1:<br/>' + activeTask.hint1);
@@ -68,6 +70,20 @@ $('#done').click(function() {
     incrementGame('false');
 });
 
+$('#tryAgain').click(function() {
+    $('.gameElements').show();
+    $('.alert').hide();
+    $('#tryAgain').hide();
+});
+
+$('#nextTask').click(function() {
+    getNextTask();
+    $('.gameElements').show();
+    $('.alert').hide();
+    $('#nextTask').hide();
+    incrementPirate();
+});
+
 function incrementGame(isSkipping) {
     var json = {
         isSkipping: isSkipping,
@@ -77,38 +93,56 @@ function incrementGame(isSkipping) {
         getLocation(function(position) {
             json.location = {
                 lon: position.coords.longitude,
-                lat: position.coords.latitude
+                lat: position.coords.latitude,
+                accuracy: position.coords.accuracy
             };
-            console.log(json.location);
             json.taskId = getCookie('activeTaskId');
             postTaskComplete(json);
         });
     } else {
-        postTaskComplete(json);
+        postTaskComplete(json, getNextTask);
     }
 }
 
-function postTaskComplete(json) {
+function postTaskComplete(json, cb) {
     $.post('/user/game/taskComplete/' + gameId, json, function(data) {
-        if (data.msg !== 'ok') {
-            console.log('ERROR incrementing ');
+        if (data.msg === 'Correct location') {
+            showAlert('success', 'Good job, you completed the task!');
+            $('#nextTask').show();
+        } else if (data.msg === 'Incorrect location') {
+            showAlert('warning', 'Sorry, but you are not at the right location!');
+            $('#tryAgain').show();
         } else {
-            $.getJSON('/user/game/getActiveTask/' + gameId, function(data) {
-                if (data.msg === 'ok') {
-                    $('#taskName').text(data.task.taskName);
-                    $('#puzzle').text(data.task.riddleText);
-                    activeTask = data.task;
-                    setCookie('activeTaskId', data.task.id);
-                } else if (data.msg === 'Game Over!') {
-                    $('#puzzle').text(data.msg);
-                    $('#skip').attr('disabled', true);
-                } else {
-                    console.log('ERROR incrementing');
-                }
-            });
+            cb();
         }
     });
 }
+
+
+//hides all game elements and only shows the message
+function showAlert(type, msg) {
+    $('.gameElements').hide();
+    $('.alert.alert-' + type).text(msg).show();
+}
+
+
+function getNextTask() {
+    $.getJSON('/user/game/getActiveTask/' + gameId, function(data) {
+        console.log(data);
+        if (data.msg === 'ok') {
+            $('#taskName').text(data.task.taskName);
+            $('#puzzle').text(data.task.riddleText);
+            activeTask = data.task;
+            setCookie('activeTaskId', data.task.id);
+        } else if (data.msg === 'Game Over!') {
+            $('#puzzle').text(data.msg);
+            $('#skip').attr('disabled', true);
+        } else {
+            console.log('ERROR incrementing');
+        }
+    });
+}
+
 
 function getLocation(cb) {
     if (navigator.geolocation) {
