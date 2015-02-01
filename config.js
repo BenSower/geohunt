@@ -18,7 +18,7 @@ module.exports = {
     },
     sessionSecret: 'flkdfkföldrfkö',
     mongodb: {
-        mongoUrl : 'mongodb://localhost/mediaquery',
+        mongoUrl : 'mongodb://localhost:33841/mediaquery',
         userTable : 'users',
         taskTable : 'tasks',
         groupTable : 'groups',
