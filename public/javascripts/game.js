@@ -59,11 +59,14 @@ function incrementPirate() {
 
 $('#hint1-btn').click(function() {
     $('#puzzle').append('<br/><br/>Tipp #1:<br/>' + activeTask.hint1);
+    disableButton('#hint1-btn');
 });
 
 
 $('#hint2-btn').click(function() {
     $('#puzzle').append('<br/><br/>Tipp #2:<br/>' + activeTask.hint2);
+    disableButton('#hint2-btn');
+
 });
 
 $('#done').click(function() {
