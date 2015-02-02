@@ -9,8 +9,8 @@ router.get('/', function(req, res) {
     res.render('index');
 });
 
-router.get('/about', ensureAuthenticated, function(req, res) {
-  res.render('about', { loggedIn: 'true'});
+router.get('/about', function(req, res) {
+  res.render('about');
 });
 
 router.get('/login', function(req, res) {
@@ -34,6 +34,10 @@ router.get('/start', ensureAuthenticated, function(req, res) {
 
 router.get('/create-task', ensureAuthenticated, function(req, res) {
     res.render('create-task', { loggedIn: 'true'});
+});
+
+router.get('/statistics', ensureAuthenticated, function(req, res) {
+    res.render('statistics', { loggedIn: 'true'});
 });
 
 router.get('/logout', ensureAuthenticated, function(req, res) {

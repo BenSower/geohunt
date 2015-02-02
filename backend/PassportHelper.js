@@ -70,6 +70,7 @@ PassportHelper.deserializeUser = function(id, done) {
 //   login page.
 PassportHelper.ensureAuthenticated = function(req, res, next) {
     if (req.isAuthenticated()) {
+        req.session.userInfo = {username : req.user.username};
         return next();
     }
     res.redirect('/login');

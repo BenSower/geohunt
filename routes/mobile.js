@@ -5,15 +5,12 @@ var express = require('express'),
 
 /* GET home page. */
 router.get('/', ensureAuthenticated, function(req, res) {
-    res.render('welcome');
+    res.render('welcome', { loggedIn: 'true'});
 });
 
 router.get('/game', ensureAuthenticated,  function(req, res) {
-    res.render('game');
+    res.render('game', { loggedIn: 'true'});
 });
 
-router.get('/group', ensureAuthenticated, function(req, res) {
-    res.render('group');
-});
 
 module.exports = router;

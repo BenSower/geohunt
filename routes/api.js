@@ -35,7 +35,7 @@ router.post('/task/create', function(req, res) {
                 coordinates: [lon, lat],
                 category: 'task'
             }
-        }, function(err, docs) {
+        }, function(err) {
             if (err) throw err;
             res.send('OK');
         });
@@ -49,11 +49,27 @@ router.post('/register', function(req, res) {
     MongoClient.connect(mongoUrl, function(err, db) {
         if (err) throw err;
         var collection = db.collection(config.mongodb.userTable);
-        collection.insert(req.body, function(err, docs) {
-            if (err) throw err;
-            res.redirect('/login');
-            db.close();
+        collection.ensureIndex({
+            username: 1
+        }, {
+            unique: true
+        }, function(err) {
+            if (err) {
+                console.log(err);
+            } else {
+                collection.insert(req.body, function(err) {
+                    if (err) {
+                        console.log(err);
+                        res.redirect('/register');
+                    } else {
+                        res.redirect('/login');
+                    }
+
+                    db.close();
+                });
+            }
         });
+
     });
 });
 
@@ -92,6 +108,38 @@ router.post('/game/createHunt', function(req, res) {
     });
 });
 
+router.get('/statistics', function(req, res) {
+    
+    console.log(req.session.userInfo);
+    var stats = getStatsByUsername(req.session.userInfo.username, function(error, user){
+        if (user !== null){
+            res.json(user.username);
+        } else {
+            res.json({
+                'msg' : 'could not find user'
+            });
+            console.log('User could not be found');
+        }
+    });
+});
+
+function getStatsByUsername(username, fn) {
+    MongoClient.connect(mongoUrl, function(err, db) {
+        if (err) throw err;
+        var collection = db.collection(config.mongodb.userTable);
+        collection.findOne({
+            'username': username
+        }, function(err2, user) {
+            if (err) {
+                fn(null, null);
+                throw err;
+            }
+            db.close();
+            return fn(null, user);
+        });
+    });
+}
+
 
 router.get('/game/getActiveTask/:gameId', function(req, res) {
     MongoClient.connect(mongoUrl, function(err, db) {
@@ -104,7 +152,14 @@ router.get('/game/getActiveTask/:gameId', function(req, res) {
         }, function(err, game) {
             if (err) throw err;
             //console.log(game.tasks[game.index]._id);
-            if (game.index == TASKS_PER_GAME - 1) {
+            console.log(game);
+            if (game.tasks.indexOf(null) !== -1) {
+                console.log('Error finding tasks for game ' + id);
+                console.log('at least one task is missing: ' + game);
+                res.json({
+                    'msg': 'error, no task found'
+                });
+            } else if (game.index == TASKS_PER_GAME - 1) {
                 res.json({
                     'msg': 'Game Over!'
                 });

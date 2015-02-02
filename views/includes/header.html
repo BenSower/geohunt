@@ -1,7 +1,12 @@
 <div class="header">
     <nav>
         <ul class="nav nav-pills pull-right">
-            <li role="presentation" class="active"><a href="/">Home</a>
+            <li role="presentation">
+                <% if(typeof loggedIn != "undefined"){ %>
+                    <a href="/start">Dashboard</a>
+                <% } else{ %>
+                    <a href="/">Home</a>
+                <% } %>
             </li>
             <li role="presentation"><a href="/about">About</a>
             </li>
