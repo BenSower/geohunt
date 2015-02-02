@@ -1,10 +1,10 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+	padding: 50px;
+	font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
 a {
-  color: #00B7FF;
+	color: #00B7FF;
 }
 
 .input{
@@ -13,8 +13,8 @@ a {
 }
 
 .riddle{
-width: 80%;
-height: 131px;
+	width: 80%;
+	height: 131px;
 }
 
 #user, #passwort, #riddleText, #hint1, #hint2, #submitButton, #lon, #lat{
@@ -35,7 +35,7 @@ height: 131px;
 
 .jumbotron img{
 	display: block;
-	margin-left: auto;
+	margin-left: -50px;
 	margin-right: auto;
 }
 
@@ -63,10 +63,46 @@ nav{
 
 @media (max-device-width: 480px) {
 	body{
-	padding: 0;
+		padding: 0;
 	}
 	
 	.header img{
-	width: 50%;
-}
+		width: 26%;
+	}
+
+	.header{
+		padding-left: 0;
+		padding-right: 0;
+		height:50px;
+	}
+
+	#puzzle{
+		min-height: auto;
+	}
+
+	.jumbotron .btn {
+		padding: 5px 9px;
+		font-size: 18px;
+	}
+
+	#pirateCollumn{
+		float: left;
+		width: 45%;
+		height: auto;
+	}
+
+	#puzzleDesc{
+		height: auto;
+		width: 50%;
+		float: right;
+		margin-right: 10px;
+	}
+
+	.footer img{
+		width: 80px;
+	}
+
+	.jombptron img{
+		width:100%;
+	}
 }
