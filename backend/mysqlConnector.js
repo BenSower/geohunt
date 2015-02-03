@@ -1,6 +1,13 @@
 'use strict';
 var mysql  = require('mysql'),
-	config = require('../config');
+	config = require('../config'),
+	connectionConfig = {
+		host: config.database.host,
+		port: config.database.port,
+		user: process.env.MEDIAQ_USER || config.database.user,
+		password: process.env.MEDIAQ_PW || config.database.password,
+		database: 'MediaQ_V2'
+	};
 
 /*
 Constructor, returns a ssh tunneled mysql-connection object
@@ -16,7 +23,7 @@ function MysqlConnector(){
 MysqlConnector.prototype.connectMysql = function (callback){
     var self = this;
 	//initializes connection, but does not actually connect it
-	self.connection = mysql.createConnection(config.database);
+	self.connection = mysql.createConnection(connectionConfig);
 
 	console.log('Trying to connect to Mysql DB...');
 	//actually establishes a connection to the mysql-db
