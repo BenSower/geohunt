@@ -85,7 +85,7 @@ nav{
 		font-size: 18px;
 	}
 
-	#pirateCollumn{
+	#pirateColumn{
 		float: left;
 		width: 45%;
 		height: auto;
@@ -102,7 +102,7 @@ nav{
 		width: 80px;
 	}
 
-	.jombptron img{
+	.jombotron img{
 		width:100%;
 	}
 }
