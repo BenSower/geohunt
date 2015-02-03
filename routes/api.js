@@ -2,10 +2,14 @@
 var MongoClient = require('mongodb').MongoClient,
     config = require('../config'),
     express = require('express'),
+    async = require('async'),
     ObjectID = require('mongodb').ObjectID,
     mongoUrl = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || config.mongodb.mongoUrl,
     router = express.Router(),
-    TASKS_PER_GAME = 4;
+    TASKS_PER_GAME = 4,
+    MysqlConnector = require('../backend/mysqlConnector'),
+    db = new MysqlConnector();
+
 
 
 router.post('/task/create', function(req, res) {
@@ -108,15 +112,20 @@ router.post('/game/createHunt', function(req, res) {
     });
 });
 
+function queryMediaQ(query, fn) {
+    db.query(query, function(rows, fields) {
+        fn(rows, fields);
+    }, 10);
+}
+
+
 router.get('/statistics', function(req, res) {
-    
-    console.log(req.session.userInfo);
-    var stats = getStatsByUsername(req.session.userInfo.username, function(error, user){
-        if (user !== null){
-            res.json(user.username);
+    getStatsByUsername(req.session.userInfo.username, function(error, userStats) {
+        if (userStats !== null) {
+            res.json(userStats);
         } else {
             res.json({
-                'msg' : 'could not find user'
+                'msg': 'could not find user'
             });
             console.log('User could not be found');
         }
@@ -124,19 +133,46 @@ router.get('/statistics', function(req, res) {
 });
 
 function getStatsByUsername(username, fn) {
-    MongoClient.connect(mongoUrl, function(err, db) {
-        if (err) throw err;
-        var collection = db.collection(config.mongodb.userTable);
-        collection.findOne({
-            'username': username
-        }, function(err2, user) {
-            if (err) {
-                fn(null, null);
-                throw err;
-            }
-            db.close();
-            return fn(null, user);
-        });
+
+    var user = {};
+
+    //get data from mysql and mongodb
+    async.parallel({
+        mediaQ: function(callback) {
+            var query = 'SELECT UserName,' +
+                ' DeviceOs, LastActivityDate, count(VideoId) AS \'Uploaded Videos\'' +
+                ' FROM MediaQ_V2.VIDEO_INFO' +
+                ' INNER JOIN MediaQ_V2.VIDEO_USER USING(VideoId)' +
+                ' INNER JOIN MediaQ_V2.USERS_PROFILES USING(UserId)' +
+                ' WHERE UserName = \'' + db.sanitizeString(username) + '\'' +
+                ' Order By count(VideoId) DESC;';
+            queryMediaQ(query, function(rows) {
+                callback(null, rows[0]);
+            });
+        },
+        geoHunt: function(callback) {
+            MongoClient.connect(mongoUrl, function(err, db) {
+                if (err) callback(err, null);
+                var collection = db.collection(config.mongodb.userTable);
+                collection.findOne({
+                    'username': username
+                }, function(err2, user) {
+                    if (err2) {
+                        callback(err, null);
+                        throw err;
+                    }
+                    db.close();
+                    user = { 
+                        userName : user.username
+                    };
+                    callback(null, user);
+                });
+            });
+        }
+    },
+    function(err, results) {
+        console.log(results, err);
+        fn(null, results);
     });
 }
 

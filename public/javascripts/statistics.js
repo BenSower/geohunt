@@ -3,6 +3,11 @@
 $( document ).ready(function() {
     
     $.getJSON('/user/statistics', function(stats){
-    	$('#stats').text('Username: ' + stats);
+    	var geoHunt = stats.geoHunt,
+    		mediaQ = stats.mediaQ,
+    		formattedStats = '<p> Username: ' + geoHunt.userName + '</p>' +
+    						 '<p> Uploaded Videos: ' + mediaQ['Uploaded Videos'] + '</p>' +
+    						 '<p> Last Activity Date: ' + new Date(mediaQ.LastActivityDate) + '</p>';
+    	$('#stats').html(formattedStats);
     });
 });
