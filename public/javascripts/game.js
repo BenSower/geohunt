@@ -131,7 +131,6 @@ function showAlert(type, msg) {
 
 function getNextTask() {
     $.getJSON('/user/game/getActiveTask/' + gameId, function(data) {
-        console.log(data);
         if (data.msg === 'ok') {
             $('#taskName').text(data.task.taskName);
             $('#puzzle').text(data.task.riddleText);
