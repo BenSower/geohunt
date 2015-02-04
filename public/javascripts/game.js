@@ -110,7 +110,7 @@ function incrementGame(isSkipping) {
 function postTaskComplete(json, cb) {
     $.post('/user/game/taskComplete/' + gameId, json, function(data) {
         if (data.msg === 'Correct location') {
-            showAlert('success', 'Good job, you completed the task! Now take a video of the object and upload it to MediaQ!');
+            showAlert('success', 'Good job, you completed the task! Now take a short video of the object and upload it to MediaQ later on to enter the highscore!');
             $('#nextTask').show();
         } else if (data.msg === 'Incorrect location') {
             showAlert('warning', 'Sorry, but you are not at the right location!');
@@ -137,8 +137,8 @@ function getNextTask() {
             activeTask = data.task;
             setCookie('activeTaskId', data.task.id);
         } else if (data.msg === 'Game Over!') {
-            $('#puzzle').text(data.msg);
-            $('#skip').attr('disabled', true);
+            $('#dashboard').show();
+            showAlert('success', data.msg);
         } else {
             console.log('ERROR incrementing');
         }
