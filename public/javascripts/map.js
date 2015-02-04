@@ -42,20 +42,17 @@ map.on('singleclick', function(evt) {
 
 $('#submitButton').click(function(event) {
     var location = [$('#lon').val(), $('#lat').val()],
+        taskName = $('#taskName').val(),
         riddleText = $('#riddleText').val(),
         hints = [$('#hint1').val(), $('#hint2').val()];
 
-    console.log(location);
-
     $.post('/user/task/create', {
-        'taskName': '<dummy>',
-        'userId': '<dummy>',
+        'taskName': taskName,
         'completeCount': 0,
         'assignCount': 0,
         'location': location,
         'riddleText': riddleText,
         'hints': hints
     }, function(data) {
-        console.log(data);
     }, 'json');
 });

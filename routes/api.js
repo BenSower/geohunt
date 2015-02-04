@@ -68,7 +68,6 @@ router.post('/register', function(req, res) {
                     } else {
                         res.redirect('/login');
                     }
-
                     db.close();
                 });
             }
@@ -158,7 +157,7 @@ function getStatsByUsername(username, fn) {
                     'username': username
                 }, function(err2, user) {
                     if (err2) {
-                        callback(err, null);
+                        callback(err, null); 
                         throw err;
                     }
                     db.close();
@@ -171,7 +170,6 @@ function getStatsByUsername(username, fn) {
         }
     },
     function(err, results) {
-        console.log(results, err);
         fn(null, results);
     });
 }

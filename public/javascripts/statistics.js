@@ -1,8 +1,15 @@
 'use strict';
 
 $( document ).ready(function() {
-    
-    $.getJSON('/user/statistics', function(stats){
+    getStats();
+});
+
+$('#mediaQCheck').click(function(){
+	getStats();
+});
+
+function getStats(){
+	$.getJSON('/user/statistics', function(stats){
     	var geoHunt = stats.geoHunt,
     		mediaQ = stats.mediaQ,
     		formattedStats = '<p> Username: ' + geoHunt.userName + '</p>' +
@@ -10,4 +17,4 @@ $( document ).ready(function() {
     						 '<p> Last Activity Date: ' + new Date(mediaQ.LastActivityDate) + '</p>';
     	$('#stats').html(formattedStats);
     });
-});
+}
