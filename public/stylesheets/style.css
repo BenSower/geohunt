@@ -17,8 +17,13 @@ a {
 	height: 131px;
 }
 
-#user, #passwort, #riddleText, #hint1, #hint2, #submitButton, #lon, #lat{
+#user, #passwort, #riddleText, #hint1, #hint2, #submitButton, #password{
 	float:right;
+	margin-bottom: 5px;
+}
+
+#lon, #lat{
+	width:210px;
 }
 
 #riddleText, #hint1, #hint2{
@@ -40,6 +45,10 @@ a {
 }
 
 .longlat{
+	width: 280px;
+}
+
+.longlat span{
 	width: 300px;
 }
 
@@ -104,5 +113,18 @@ nav{
 
 	.jombotron img{
 		width:100%;
+	}
+
+	.nav li a {
+		padding: 9px 5px;
+	}
+
+	#lon, #lat{
+
+		width:68%;
+	}
+
+	.riddle{
+		margin-top:20px;
 	}
 }
