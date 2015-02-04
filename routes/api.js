@@ -132,45 +132,65 @@ router.get('/statistics', function(req, res) {
 });
 
 function getStatsByUsername(username, fn) {
-
-    var user = {};
-
-    //get data from mysql and mongodb
+    //get data from mediaq and geohunt (userstats and taskStats) 
     async.parallel({
-        mediaQ: function(callback) {
-            var query = 'SELECT UserName,' +
-                ' DeviceOs, LastActivityDate, count(VideoId) AS \'Uploaded Videos\'' +
-                ' FROM MediaQ_V2.VIDEO_INFO' +
-                ' INNER JOIN MediaQ_V2.VIDEO_USER USING(VideoId)' +
-                ' INNER JOIN MediaQ_V2.USERS_PROFILES USING(UserId)' +
-                ' WHERE UserName = \'' + db.sanitizeString(username) + '\'' +
-                ' Order By count(VideoId) DESC;';
-            queryMediaQ(query, function(rows) {
-                callback(null, rows[0]);
-            });
+            mediaQ: function(callback) {
+                getMediaQStats(callback, username);
+            },
+            geoHunt: function(callback) {
+                getGeoHuntStats(callback, username);
+            },
+            tasks: function(callback) {
+                getTaskStats(callback);
+            }
         },
-        geoHunt: function(callback) {
-            MongoClient.connect(mongoUrl, function(err, db) {
-                if (err) callback(err, null);
-                var collection = db.collection(config.mongodb.userTable);
-                collection.findOne({
-                    'username': username
-                }, function(err2, user) {
-                    if (err2) {
-                        callback(err, null); 
-                        throw err;
-                    }
-                    db.close();
-                    user = { 
-                        userName : user.username
-                    };
-                    callback(null, user);
-                });
-            });
-        }
-    },
-    function(err, results) {
-        fn(null, results);
+        function(err, results) {
+            fn(null, results);
+        });
+}
+
+function getMediaQStats(callback, username) {
+    var query = 'SELECT UserName,' +
+        ' DeviceOs, LastActivityDate, count(VideoId) AS \'Uploaded Videos\'' +
+        ' FROM MediaQ_V2.VIDEO_INFO' +
+        ' INNER JOIN MediaQ_V2.VIDEO_USER USING(VideoId)' +
+        ' INNER JOIN MediaQ_V2.USERS_PROFILES USING(UserId)' +
+        ' WHERE UserName = \'' + db.sanitizeString(username) + '\'' +
+        ' Order By count(VideoId) DESC;';
+    queryMediaQ(query, function(rows) {
+        callback(null, rows[0]);
+    });
+}
+
+function getGeoHuntStats(callback, username) {
+    MongoClient.connect(mongoUrl, function(err, db) {
+        if (err) callback(err, null);
+        var collection = db.collection(config.mongodb.userTable);
+        collection.findOne({
+            'username': username
+        }, function(err2, user) {
+            if (err2) {
+                callback(err, null);
+                throw err;
+            }
+            db.close();
+            user = {
+                userName: user.username
+            };
+            callback(null, user);
+        });
+    });
+}
+
+function getTaskStats(callback) {
+    MongoClient.connect(mongoUrl, function(err, db) {
+        if (err) throw err;
+        var collection = db.collection(config.mongodb.taskTable);
+        collection.count(function(err, taskCount) {
+            if (err) throw err;
+            db.close();
+            callback(null, {count: taskCount});
+        });
     });
 }
 
