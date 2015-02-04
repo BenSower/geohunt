@@ -110,7 +110,7 @@ function incrementGame(isSkipping) {
 function postTaskComplete(json, cb) {
     $.post('/user/game/taskComplete/' + gameId, json, function(data) {
         if (data.msg === 'Correct location') {
-            showAlert('success', 'Good job, you completed the task!');
+            showAlert('success', 'Good job, you completed the task! Now take a video of the object and upload it to MediaQ!');
             $('#nextTask').show();
         } else if (data.msg === 'Incorrect location') {
             showAlert('warning', 'Sorry, but you are not at the right location!');

@@ -30,8 +30,8 @@ router.post('/task/create', function(req, res) {
         collection.insert({
             taskName: req.body.taskName,
             userId: req.body.userId,
-            completeCount: req.body.completeCount,
-            assignCount: req.body.assignCount,
+            completeCount: Number(req.body.completeCount),
+            assignCount: Number(req.body.assignCount),
             riddleText: req.body.riddleText,
             hints: req.body.hints,
             location: {
@@ -39,9 +39,9 @@ router.post('/task/create', function(req, res) {
                 coordinates: [lon, lat],
                 category: 'task'
             }
-        }, function(err) {
-            if (err) throw err;
-            res.send('OK');
+        }, function(err, obj) {
+            var msg = (err) ? {msg : err} : {msg : 'OK'};
+            res.json(msg);
         });
 
     });
@@ -189,7 +189,9 @@ function getTaskStats(callback) {
         collection.count(function(err, taskCount) {
             if (err) throw err;
             db.close();
-            callback(null, {count: taskCount});
+            callback(null, {
+                count: taskCount
+            });
         });
     });
 }
@@ -206,7 +208,6 @@ router.get('/game/getActiveTask/:gameId', function(req, res) {
         }, function(err, game) {
             if (err) throw err;
             //console.log(game.tasks[game.index]._id);
-            console.log(game);
             if (game.tasks.indexOf(null) !== -1) {
                 console.log('Error finding tasks for game ' + id);
                 console.log('at least one task is missing: ' + game);
@@ -219,6 +220,7 @@ router.get('/game/getActiveTask/:gameId', function(req, res) {
                 });
             } else {
                 var task = game.tasks[game.index];
+                console.log(task);
                 res.json({
                     'msg': 'ok',
                     'task': {
@@ -228,6 +230,10 @@ router.get('/game/getActiveTask/:gameId', function(req, res) {
                         hint1: task.hints[0],
                         hint2: task.hints[1]
                     }
+                });
+                incrementTaskdata(task._id, 'assignCount', function(err, taskId) {
+                    if (err) console.log(err);
+                    console.log('successfully updated task with id ' + taskId);
                 });
             }
 
@@ -250,6 +256,24 @@ function incrementGame(db, gameId, cb) {
         console.log('Successfully incremented index of game ' + gameId);
         db.close();
         cb();
+    });
+}
+
+
+function incrementTaskdata(taskId, field, cb) {
+    MongoClient.connect(mongoUrl, function(err, db) {
+        var collection = db.collection(config.mongodb.taskTable);
+        var incQuery = {};
+        incQuery[field] = 1;
+        collection.update({
+            '_id': new ObjectID(taskId)
+        }, {
+            $inc: incQuery //increment game-index by 1
+        }, function(err) {
+            if (err) throw err;
+            db.close();
+            cb(null, taskId);
+        });
     });
 }
 
@@ -276,11 +300,15 @@ router.post('/game/taskComplete/:gameId', function(req, res) {
                 console.log('Location of Player: lon = ' + lonPlayer + ' lat = ' + latPlayer + ' Accuracy: ' + accuracy);
                 console.log('Distance to task: ' + distance + ' km');
                 //accuracy > 6000 to allow computer based debugging...
-                if ((accuracy < 200 || accuracy > 6000) && distance < 0.2) {
+                if ((accuracy < 200 || accuracy > 600) && distance < 20) {
                     incrementGame(db, gameId, function() {
                         res.json({
                             'msg': 'Correct location'
                         });
+                    });
+                    incrementTaskdata(req.body.taskId, 'completeCount', function(err, taskId) {
+                        if (err) console.log(err);
+                        console.log('successfully updated task with id ' + taskId);
                     });
                     console.log('User found location');
                 } else {

@@ -54,5 +54,16 @@ $('#submitButton').click(function(event) {
         'riddleText': riddleText,
         'hints': hints
     }, function(data) {
+        if (data.msg === 'OK'){
+            showAlert('success', 'Successfully created new task ' + taskName + '<br\\>');
+        }else {
+            showAlert('warning', 'Error creating task:<br\>' + data.msg.err + '<br\\>');
+        }
     }, 'json');
 });
+
+
+//hides all game elements and only shows the message
+function showAlert(type, msg) {
+    $('.alert.alert-' + type).append(msg).show();
+}
