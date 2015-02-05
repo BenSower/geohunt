@@ -66,7 +66,6 @@ $('#hint1-btn').click(function() {
 $('#hint2-btn').click(function() {
     $('#puzzle').append('<br/><br/>Tipp #2:<br/>' + activeTask.hint2);
     disableButton('#hint2-btn');
-
 });
 
 $('#done').click(function() {
@@ -110,7 +109,7 @@ function incrementGame(isSkipping) {
 function postTaskComplete(json, cb) {
     $.post('/user/game/taskComplete/' + gameId, json, function(data) {
         if (data.msg === 'Correct location') {
-            showAlert('success', 'Good job, you completed the task! Now take a short video of the object and upload it to MediaQ later on to enter the highscore!');
+            showAlert('success', 'Good job, you completed the task! Now please take a short video of the object!');
             $('#nextTask').show();
         } else if (data.msg === 'Incorrect location') {
             showAlert('warning', 'Sorry, but you are not at the right location!');
@@ -138,9 +137,9 @@ function getNextTask() {
             setCookie('activeTaskId', data.task.id);
         } else if (data.msg === 'Game Over!') {
             $('#dashboard').show();
-            showAlert('success', data.msg);
+            showAlert('success', data.info);
         } else {
-            console.log('ERROR incrementing');
+            console.log('ERROR incrementing: ' + data.msg);
         }
     });
 }

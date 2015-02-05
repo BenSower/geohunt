@@ -123,7 +123,6 @@ router.post('/game/createHunt', function(req, res) {
 function addActiveGameToUser(gameId, username) {
     MongoClient.connect(mongoUrl, function(err, db) {
         var connection = db.collection(config.mongodb.userTable);
-        console.log(gameId, username);
         connection.update({
                 'username': username
             }, {
@@ -135,7 +134,6 @@ function addActiveGameToUser(gameId, username) {
                 if (err) throw err;
                 db.close();
             });
-
     });
 }
 
@@ -239,13 +237,14 @@ router.get('/game/getActiveTask/:gameId', function(req, res) {
             //console.log(game.tasks[game.index]._id);
             if (game.tasks.indexOf(null) !== -1) {
                 console.log('Error finding tasks for game ' + id);
-                console.log('at least one task is missing: ' + game);
+                console.log('at least one task is missing: ' + game.tasks);
                 res.json({
                     'msg': 'error, no task found'
                 });
-            } else if (game.index == TASKS_PER_GAME - 1) {
+            } else if (game.index == TASKS_PER_GAME) {
                 res.json({
-                    'msg': 'Game Over!'
+                    'msg' : 'Game Over!',
+                    'info': 'Game Complete! Please upload all MediaQ videos soon, so you can enter the highscore!'
                 });
             } else {
                 var task = game.tasks[game.index];
@@ -299,9 +298,26 @@ function incrementTaskdata(taskId, field, cb) {
             $inc: incQuery //increment game-index by 1
         }, function(err) {
             if (err) throw err;
-            db.close();
             cb(null, taskId);
         });
+    });
+}
+
+function addCompleteTaskToUser(taskId, username) {
+    MongoClient.connect(mongoUrl, function(err, db) {
+        var connection = db.collection(config.mongodb.userTable);
+        console.log(taskId, username);
+        connection.update({
+                'username': username
+            }, {
+                $push: {
+                    tasksCompleted: new ObjectID(taskId)
+                }
+            },
+            function(err, docs) {
+                if (err) throw err;
+                db.close();
+            });
     });
 }
 
@@ -337,6 +353,7 @@ router.post('/game/taskComplete/:gameId', function(req, res) {
                     incrementTaskdata(req.body.taskId, 'completeCount', function(err, taskId) {
                         if (err) console.log(err);
                         console.log('successfully updated task with id ' + taskId);
+                        addCompleteTaskToUser(req.body.taskId, req.session.userInfo.username);
                     });
                     console.log('User found location');
                 } else {
@@ -383,7 +400,6 @@ function getAllTasks(lon, lat, cb) {
                 }
             }
         };
-        console.log(query);
         collection.find(query).toArray(function(err, tasks) {
             if (err) throw err;
             db.close();
