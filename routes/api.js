@@ -205,11 +205,12 @@ function getValidatedVideoCount(callback, username) {
         ' GROUP BY VideoId;';
     //gets the videos uploaded by user
     queryMediaQ(query, function(rows) {
+        var successfullyValidatedVideos = [];
+
         //gets the data of user 
         getUserData(function(userData) {
             //gets only the tasks with their location from userdata 
             getTaskLocationFromUserData(userData, function(tasks) {
-                var successfullyValidatedVideos = [];
                 for (var i = 0; i < rows.length; i++) {
                     validateVideoData(rows[i], tasks, function(succVideoData) {
                         //console.log(validatedVideos);
@@ -219,10 +220,9 @@ function getValidatedVideoCount(callback, username) {
                         }
                     });
                 }
-                console.log(successfullyValidatedVideos);
+                callback(null, successfullyValidatedVideos);
             });
         }, username);
-        callback(null, rows[0]);
     });
 }
 
