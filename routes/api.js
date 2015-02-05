@@ -40,7 +40,11 @@ router.post('/task/create', function(req, res) {
                 category: 'task'
             }
         }, function(err, obj) {
-            var msg = (err) ? {msg : err} : {msg : 'OK'};
+            var msg = (err) ? {
+                msg: err
+            } : {
+                msg: 'OK'
+            };
             res.json(msg);
         });
 
@@ -61,7 +65,13 @@ router.post('/register', function(req, res) {
             if (err) {
                 console.log(err);
             } else {
-                collection.insert(req.body, function(err) {
+                var user = {
+                    username: req.body.username,
+                    password: req.body.password,
+                    tasksCompleted: [],
+                    activeGame: null
+                };
+                collection.insert(user, function(err) {
                     if (err) {
                         console.log(err);
                         res.redirect('/register');
@@ -78,21 +88,18 @@ router.post('/register', function(req, res) {
 
 
 router.post('/game/createHunt', function(req, res) {
-
     MongoClient.connect(mongoUrl, function(err, db) {
 
         var lon = parseFloat(req.body.lon),
             lat = parseFloat(req.body.lat),
-            user = req.body.user;
-
+            user = req.session.userInfo.username;
 
         if (lon === undefined || lat === undefined || user === undefined) {
-            console.log('Missing info in request. Query: ' + req.body);
+            console.log('Missing info in request. Query: lon ' + lon + ' lat ' + lat + ' user ' + user);
             res.redirect('/login');
         } else {
             getTasksForLocation(lon, lat, function(tasks) {
                 var newGame = {
-                    'user': user,
                     'tasks': tasks,
                     'index': -1
                 };
@@ -103,13 +110,35 @@ router.post('/game/createHunt', function(req, res) {
                     if (err) throw err;
                     //res.status(200).send('OK');
                     res.send(docs[0]._id);
-                    db.close();
+                    addActiveGameToUser(docs[0]._id, user);
                 });
             });
         }
 
     });
 });
+
+
+
+function addActiveGameToUser(gameId, username) {
+    MongoClient.connect(mongoUrl, function(err, db) {
+        var connection = db.collection(config.mongodb.userTable);
+        console.log(gameId, username);
+        connection.update({
+                'username': username
+            }, {
+                $set: {
+                    activeGame: new ObjectID(gameId)
+                }
+            },
+            function(err, docs) {
+                if (err) throw err;
+                db.close();
+            });
+
+    });
+}
+
 
 function queryMediaQ(query, fn) {
     db.query(query, function(rows, fields) {
@@ -220,7 +249,6 @@ router.get('/game/getActiveTask/:gameId', function(req, res) {
                 });
             } else {
                 var task = game.tasks[game.index];
-                console.log(task);
                 res.json({
                     'msg': 'ok',
                     'task': {
