@@ -7,9 +7,9 @@ var MongoClient = require('mongodb').MongoClient,
     mongoUrl = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || config.mongodb.mongoUrl,
     router = express.Router(),
     TASKS_PER_GAME = 4,
+    MAX_DIST_TO_TASK = (process.env.DEBUG) ? 20 : 0.2, //maximal distance to task in km
     MysqlConnector = require('../backend/mysqlConnector'),
     db = new MysqlConnector();
-
 
 
 router.post('/task/create', function(req, res) {
@@ -169,6 +169,9 @@ function getStatsByUsername(username, fn) {
             },
             tasks: function(callback) {
                 getTaskStats(callback);
+            },
+            videoValidation: function(callback) {
+                getValidatedVideoCount(callback, username);
             }
         },
         function(err, results) {
@@ -189,22 +192,110 @@ function getMediaQStats(callback, username) {
     });
 }
 
+//Gets the videos uploaded by the user and compares them to his completed tasks
+function getValidatedVideoCount(callback, username) {
+    var query = 'SELECT  VideoId,' +
+        '    CONCAT_WS(\',\',' +
+        '            GROUP_CONCAT(Plat),' +
+        '            GROUP_CONCAT(Plng)) AS coords' +
+        ' FROM MediaQ_V2.VIDEO_USER' +
+        ' INNER JOIN MediaQ_V2.USERS_PROFILES USING (UserId)' +
+        ' INNER JOIN MediaQ_V2.VIDEO_METADATA USING (VideoId)' +
+        ' WHERE UserName = \'' + db.sanitizeString(username) + '\'' +
+        ' GROUP BY VideoId;';
+    //gets the videos uploaded by user
+    queryMediaQ(query, function(rows) {
+        //gets the data of user 
+        getUserData(function(userData) {
+            //gets only the tasks with their location from userdata 
+            getTaskLocationFromUserData(userData, function(tasks) {
+                var successfullyValidatedVideos = [];
+                for (var i = 0; i < rows.length; i++) {
+                    validateVideoData(rows[i], tasks, function(succVideoData) {
+                        //console.log(validatedVideos);
+                        if (succVideoData !== null) {
+                            //console.log('User uploaded a video matching a task: \n' + JSON.stringify(succVideoData));
+                            successfullyValidatedVideos.push(succVideoData);
+                        }
+                    });
+                }
+                console.log(successfullyValidatedVideos);
+            });
+        }, username);
+        callback(null, rows[0]);
+    });
+}
+
+//returns an object containing the taskId and location of all tasks
+//completed by the user
+function getTaskLocationFromUserData(userData, callback) {
+        async.map(userData.tasksCompleted, function(task, callback) {
+            getTaskById(task, function(task) {
+                task = {
+                    _id: task._id,
+                    location: task.location.coordinates
+                };
+                callback(null, task);
+            });
+        }, function(err, tasks) {
+            callback(tasks);
+        });
+    }
+    //compares the videos lon/lat to the ones of the tasks
+function validateVideoData(videoData, tasks, callback) {
+    var coords = videoData.coords.split(',');
+    var distance = MAX_DIST_TO_TASK;
+    var offset = coords.length / 2;
+    for (var i = 0; i < offset; i++) {
+        var videoLon = coords[i + offset],
+            videoLat = coords[i];
+        for (var j = 0; j < tasks.length; j++) {
+            var taskLon = tasks[j].location[0],
+                taskLat = tasks[j].location[1];
+            distance = getDistanceFromLonLatInKm(videoLon, videoLat, taskLon, taskLat);
+            //stop, if video coordinates match task
+            if (distance < MAX_DIST_TO_TASK) {
+                break;
+            }
+        }
+        if (distance < MAX_DIST_TO_TASK) {
+            var succVideoData = {
+                taskId: tasks[j]._id,
+                videoId: videoData.VideoId,
+                distanceToTask: distance
+            };
+            callback(succVideoData);
+            break;
+        }
+    }
+    callback(null);
+}
+
 function getGeoHuntStats(callback, username) {
+    getUserData(function(user) {
+        user = {
+            userName: username,
+            tasksCompleted: user.tasksCompleted.length
+        };
+        callback(null, user);
+    }, username);
+}
+
+function getUserData(callback, username) {
     MongoClient.connect(mongoUrl, function(err, db) {
         if (err) callback(err, null);
+
         var collection = db.collection(config.mongodb.userTable);
         collection.findOne({
             'username': username
         }, function(err2, user) {
+
             if (err2) {
                 callback(err, null);
                 throw err;
             }
             db.close();
-            user = {
-                userName: user.username
-            };
-            callback(null, user);
+            callback(user);
         });
     });
 }
@@ -243,7 +334,7 @@ router.get('/game/getActiveTask/:gameId', function(req, res) {
                 });
             } else if (game.index == TASKS_PER_GAME) {
                 res.json({
-                    'msg' : 'Game Over!',
+                    'msg': 'Game Over!',
                     'info': 'Game Complete! Please upload all MediaQ videos soon, so you can enter the highscore!'
                 });
             } else {
@@ -332,19 +423,19 @@ router.post('/game/taskComplete/:gameId', function(req, res) {
                 });
             });
         } else if (req.body.isSkipping === 'false' && req.body.location !== '' && req.body.taskId !== undefined) {
-            findTaskById(req.body.taskId, function(task) {
+            getTaskById(req.body.taskId, function(task) {
                 var lonPlayer = req.body.location.lon,
                     latPlayer = req.body.location.lat,
                     accuracy = req.body.location.accuracy;
 
                 var lonTask = task.location.coordinates[0],
                     latTask = task.location.coordinates[1];
-                var distance = getDistanceFromLatLonInKm(lonPlayer, latPlayer, lonTask, latTask);
+                var distance = getDistanceFromLonLatInKm(lonPlayer, latPlayer, lonTask, latTask);
                 console.log('Location of Task: lon = ' + lonTask + ' lat = ' + latTask);
                 console.log('Location of Player: lon = ' + lonPlayer + ' lat = ' + latPlayer + ' Accuracy: ' + accuracy);
                 console.log('Distance to task: ' + distance + ' km');
                 //accuracy > 6000 to allow computer based debugging...
-                if ((accuracy < 200 || accuracy > 600) && distance < 20) {
+                if ((accuracy < 200 || accuracy > 600) && distance < MAX_DIST_TO_TASK) {
                     incrementGame(db, gameId, function() {
                         res.json({
                             'msg': 'Correct location'
@@ -369,7 +460,7 @@ router.post('/game/taskComplete/:gameId', function(req, res) {
 });
 
 
-function findTaskById(id, cb) {
+function getTaskById(id, cb) {
     MongoClient.connect(mongoUrl, function(err, db) {
         if (err) throw err;
         var collection = db.collection(config.mongodb.taskTable),
@@ -437,7 +528,7 @@ function shuffle(o) {
 
 
 
-function getDistanceFromLatLonInKm(lon1, lat1, lon2, lat2) {
+function getDistanceFromLonLatInKm(lon1, lat1, lon2, lat2) {
     var R = 6371; // Radius of the earth in km
     var dLat = deg2rad(lat2 - lat1); // deg2rad below
     var dLon = deg2rad(lon2 - lon1);

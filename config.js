@@ -13,5 +13,6 @@ module.exports = {
         taskTable : 'tasks',
         groupTable : 'groups',
         gameTable : 'games'
-    }
+    },
+    debug: true
 };
