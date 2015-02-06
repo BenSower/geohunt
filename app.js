@@ -8,7 +8,8 @@ var config = require('./config'),
     bodyParser = require('body-parser'),
     passport = require('passport'),
     PassportHelper = require('./backend/PassportHelper'),
-    expressSession = require('express-session');
+    expressSession = require('express-session'),
+    favicon = require('serve-favicon');
 
 //Includes
 var index = require('./routes/index'),
@@ -23,7 +24,7 @@ app.set('view engine', 'html');
 app.engine('html', require('ejs').renderFile);
 
 // uncomment after placing your favicon in /public
-//app.use(favicon(__dirname + '/public/favicon.ico'));
+app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(expressSession({
     secret: config.sessionSecret,
     saveUninitialized: true,
