@@ -109,10 +109,10 @@ function incrementGame(isSkipping) {
 function postTaskComplete(json, cb) {
     $.post('/user/game/taskComplete/' + gameId, json, function(data) {
         if (data.msg === 'Correct location') {
-            showAlert('success', 'Good job, you completed the task! Now please take a short video of the object!');
+            showAlert('success', 'Gute Arbeit! Du hast das Objekt gefunden! Mach jetzt schnell ein Video von dem Objekt um es später hochzuladen!');
             $('#nextTask').show();
         } else if (data.msg === 'Incorrect location') {
-            showAlert('warning', 'Sorry, but you are not at the right location!');
+            showAlert('warning', 'Leider bist du nicht am richtigen Ort, probiers gleich nochmal!');
             $('#tryAgain').show();
         } else {
             cb();

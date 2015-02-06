@@ -3,18 +3,18 @@
         <ul class="nav nav-pills pull-right">
             <li role="presentation">
                 <% if(typeof loggedIn != "undefined"){ %>
-                    <a href="/start">Dashboard</a>
+                    <a href="/start"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a>
                 <% } else{ %>
-                    <a href="/">Home</a>
+                    <a href="/"><span class="glyphicon glyphicon-home" aria-hidden="true"></a>
                 <% } %>
             </li>
-            <li role="presentation"><a href="/about">About</a>
+            <li role="presentation"><a href="/about"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></a>
             </li>
             <li role="presentation">
                 <% if(typeof loggedIn != "undefined"){ %>
-                    <a href="/logout">Logout</a>
+                    <a href="/logout"><span class="glyphicon glyphicon-off" aria-hidden="true"></a>
                 <% } else{ %>
-                    <a href="/login">Login</a>
+                    <a href="/login"><span class="glyphicon glyphicon-globe" aria-hidden="true"></a>
                 <% } %>
             </li>
         </ul>

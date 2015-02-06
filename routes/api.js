@@ -14,6 +14,7 @@ var MongoClient = require('mongodb').MongoClient,
 
 router.post('/task/create', function(req, res) {
     console.log('Adding ' + req.body.taskName + ' with location ' + req.body.location + ' to db');
+    console.log(req.body);
     MongoClient.connect(mongoUrl, function(err, db) {
         if (err) throw err;
         //console.log(req.body);
@@ -335,7 +336,7 @@ router.get('/game/getActiveTask/:gameId', function(req, res) {
             } else if (game.index == TASKS_PER_GAME) {
                 res.json({
                     'msg': 'Game Over!',
-                    'info': 'Game Complete! Please upload all MediaQ videos soon, so you can enter the highscore!'
+                    'info': 'Spiel zu Ende, lade jetzt alle Videos die du aufgenommen hast in mediaQ hoch, um deine Highscore zu verbessern!'
                 });
             } else {
                 var task = game.tasks[game.index];

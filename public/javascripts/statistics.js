@@ -16,18 +16,16 @@ function getStats() {
             if ($.inArray(task.taskId, uniqueTasks) === -1) uniqueTasks.push(task.taskId);
         });
 
-
         var geoHunt = stats.geoHunt,
             mediaQ = stats.mediaQ,
-            tasks = stats.tasks,
-            formattedStats = '<p> Username: ' + geoHunt.userName + '</p>' +
-            '<p> Uploaded Videos: ' + mediaQ['Uploaded Videos'] + '</p>' +
-            '<p> Last Activity Date: ' + new Date(mediaQ.LastActivityDate).toLocaleDateString() + '</p>' +
-            '<p> Tasks completed: ' + geoHunt.tasksCompleted + '</p>' +
-            '<p> Validated Videos: ' + stats.videoValidation.length + '</p>' +
-            '<p> Validated tasks: ' + uniqueTasks.length + '</p>' +
-            '<p> Global number of tasks: ' + tasks.count + '</p>';
+            tasks = stats.tasks;
 
-        $('#stats').html(formattedStats);
+        $('#username').text(geoHunt.userName);
+        $('#uploadedVideos').text(mediaQ['Uploaded Videos']);
+        $('#lastActivity').text(new Date(mediaQ.LastActivityDate).toLocaleDateString());
+        $('#tasksCompleted').text(geoHunt.tasksCompleted);
+        $('#validatedVideos').text(stats.videoValidation.length);
+        $('#validatedTasks').text(uniqueTasks.length);
+        $('#globalTaskCount').text(tasks.count);
     });
 }

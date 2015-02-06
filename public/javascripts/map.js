@@ -36,8 +36,8 @@ map.on('singleclick', function(evt) {
     var lon = transformed_coordinate[0],
         lat = transformed_coordinate[1];
 
-    document.getElementById('lon').value = lon;
-    document.getElementById('lat').value = lat;
+    $('#lon').val(lon);
+    $('#lat').val(lat);
 });
 
 $('#submitButton').click(function(event) {

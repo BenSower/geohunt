@@ -70,6 +70,10 @@ nav{
 	min-height: 250px;
 }
 
+#map {
+  width:100%;
+ }
+
 @media (max-device-width: 480px) {
 	body{
 		padding: 0;

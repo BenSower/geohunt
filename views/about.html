@@ -8,154 +8,128 @@
 <body>
 
     <div class="container">
-            <% include includes/header.html%>
-        <div class="jumbotron">
-			GeoHunt ist eine Website, die den Nutzern erlaubt, Spatial Tasks zu stellen und gleichzeitig Anreize dafür zu schaffen, sie zu erfüllen. Dafür werden die Spatial Tasks in eine ortsbezogene Schnitzeljagd eingebettet, an der die Nutzer zum eigenen Vergnügen teilnehmen. Beim Erstellen eines Tasks muss gleichzeitig ein Rätsel für die Schnitzeljagd gestellt werden. Möchte ein Nutzer dann eine Schnitzeljagd spielen, stellt GeoHunt ihm Rätsel in seiner Nähe. <br>
-			Hat der Nutzer ein Rätsel gelöst, muss er sich an den angegebenen Ort begeben. Dort wird er dann aufgefordert, ein Video mit der <a href="http://mediaqv3.cloudapp.net/home/">mediaQ - App</a> aufzunehmen (und es bei Abschluss der Schnitzeljagd in die mediaQ-Datenbank zu laden). <br>
-			GeoHunt wurde von Julia Kinshofer(B.Sc.), Benjamin Sauer(B.Sc.) und Daniel Basaran(B.Sc.) im Rahmen des Hauptseminars <a href="http://www.dbs.ifi.lmu.de/cms/Hauptseminar_%22MediaQ%22_WS1415">„MediaQ: Practical Seminar on Big Data for Social Media“</a> von Dr Matthias Renz am <a href="https://www.ifi.lmu.de">Institut für Informatik</a> der <a href="http://www.uni-muenchen.de/index.html">Ludwig-Maximilians-Universität</a> in München entwickelt.
-
-        </div>
-        <% include includes/foot.html %>
-
-
-
-    <div>
-<h3>Documentation:</h3>
-
-<h4>Motivation:</h4>
-<br>
-
-Im Rahmen des Seminars haben sich die Autoren speziell mit dem Paper <a href="http://dl.acm.org/citation.cfm?id=2424346"> GeoCrowd: Enabling Query Answering with Spatial Crowdsourcing</a> von Leyla Kazemi und Cyrus Shahabi beschäftigt. Dieses Paper bearbeitet die Probleme bei Spatial Crowdsourcing: Wie können Spatial Tasks effizient Usern zugewiesen werden und wie motiviert man User, diese Tasks auch zu erfüllen?<br> <br>
-
-Besondere Probleme bereitet dabei die Tatsache, dass die Erfüllung von Spatial Tasks für den Nutzer immer mit bestimmten Kosten verbunden ist: Er muss zunächst einmal zu dem Ort des Tasks reisen. Deswegen muss zunächst ein ausreichender Anreiz für den User geschaffen werden, den Task erfüllen zu wollen. <br> <br>
-
-Des Weiteren dürfen - auch im Rahmen einer Schnitzeljagd - die Wege zu den zugewiesenen Spatial Tasks nicht zu groß werden, da der Spieler sonst die Schnitzeljagd abbrechen würde, weil der Anreiz - der Spielspaß - die Kosten - die lange Wegstrecke - nicht mehr aufwiegen würde. <br> <br>
-
-Schlussendlich sollte noch gewährleistet werden, dass die Schnitzeljagd an einer Location mit kostenlosem Internetzugang (Free-WiFi) endet, damit die Nutzer ihre Videos in der mediaQ-App auch in die Datenbank hochladen können, ohne ihre eigene Bandbreite zu verschwenden. <br> <br> <br>
-
-
-
-<h4>Formale Problemdefinition:</h4><br>
-
-
-Eines der Kernprobleme ist das Maximum Task Assignment Problem, das sich mit der Frage beschäftigt, wie gewährleistet werden kann, dass die maximale Anzahl an Tasks erfüllt wird. <br> <br>
-
-Seien Wi die Nutzer, die gewillt sind Tasks zu erfüllen. Seien Ti die Spatial Tasks, die erfüllt werden müssen. Es gilt dann, eine Funktion F: Ti &rarr; Wj zu finden, sodass die Anzahl der zugewiesenen Tasks Ti maximiert wird. <br> <br>
-
-Das alleine reicht jedoch noch nicht, da nicht garantiert werden kann, dass ein zugewiesener Task auch erfüllt wird (weise ich einem Nutzer, der sich in München befindet, einen Task in New York City zu, ist es extrem unwahrscheinlich, dass er ihn erfüllt). Um die Anzahl erfüllter Spatial Tasks zu maximieren, wurden in <a href="http://dl.acm.org/citation.cfm?id=2424346"> GeoCrowd: Enabling Query Answering with Spatial Crowdsourcing</a> diverse Algorithmen vorgeschlagen. Im Rahmen von GeoHunt wurde der Nearest Neighbor-Algorithmus in leicht abgewandelter Form verwendet, da dadurch die Kosten der Anreise für den Spieler minimiert werden, was eine Grundvorraussetzung für den Spielspaß darstellt: <br><br><br>
-
-
-(A) Sei Pn die Position des Nutzers, der eine Schnitzeljagd spielen will, und r der Radius innerhalb dessen er sich bewegen kann. Seien Ti die Tasks, die noch nicht erfüllt sind.
-Dann muss dem Nutzer eine Schnitzeljagd zugewiesen werden, sodass gilt:
-Tj (0 &lt; j &lt; 5) aus Ti mit dist(Tj, Pn) &lt; r und T4 muss in der Nähe eines WiFi-Hotspots liegen.<br> <br>
-
-(B) Generell muss dem Nutzer ein Anreiz A gegeben werden, den Spatial Task auszuführen, d.h. die Kosten K der Reise an den Ort des Tasks auf sich nehmen. D.h. Ai &gt; Ki für alle Spatial Tasks. <br> <br> <br>
-
-
-
-<h4>Algorithmische Lösung:</h4><br>
-
-Problem B kann nicht direkt algorithmisch gelöst werden, dennoch stellt das Schaffen geeigneter Anreize für das Erfüllen der Spatial Tasks den Kernpunkt der Arbeit der Autoren dar. Wie kann man jemandem einen Anreiz geben, an irgendeinen Ort zu fahren und dort ein Video mit der mediaQ-App aufzuzeichnen?<br> <br>
-
-Nach einigem Überlegen haben sich die Autoren entschieden, die Spatial  Tasks in ein Spiel einzubinden, da bei Spielen das Gewinnen bzw. das Spielen selbst Anreiz genug ist, Anweisungen auszuführen. Hierfür bot sich eine Schnitzeljagd an, bei der man von Ort zu Ort reisen muss, um irgendwann zu gewinnen. Dementsprechend wurde GeoHunt entwickelt. Wie bei traditionellen Schnitzeljagden muss der Spieler Rätsel lösen, die mit dem Ort des Spatial Tasks verbunden sind. Dann muss er an den Ort reisen und ein Video mit der MediaQ-App aufnehmen, um anschließend das nächste Rätsel zu lösen.<br> <br>
-
-Hierbei ergeben sich natürlich einige Probleme, das wichtigste ist die Erstellung des Rätsels. Es existiert keine AI, die ein Rätsel für eine Schnitzeljagd erstellen kann. Deswegen haben die Autoren sich entschieden, die Rätsel vom Taskersteller  selbst  stellen zu lassen.
-Wichtig ist hierbei, dass die Rätsel (mit Hilfe einer Websuche) lösbar sind und dass man dabei auch etwas lernt, z.B. über die Geschichte eines Points of Interest, von dem das Video erstellt werden soll.<br> <br>
-
-Dieses Lernen bietet dann auch einen zusätzlichen Anreiz, sich an GeoHunt zu beteiligen. Vor allem Schulklassen könnten die Schnitzeljagden mit Schulausflügen verbinden, bei denen sie etwas über die Geschichte ihrer Heimatstadt lernen und dann mehrere Videos eines Point of Interest aus verschiedenen Perspektiven in die mediaQ-Datenbank hochladen.<br> <br>
-
-Damit ein Spiel Spaß macht, muss es einfach zu bedienen sein und eine ansprechende, wenn möglich lustige Oberfläche haben. Deshalb haben die Autoren den Schwerpunkt ihrer Arbeit auf die Präsentation des Spiels gelegt, die Bedienung soll interaktiv sein und die Website schön gestaltet. Die Einführung der Figur "Hunter Hickinbottom McGreedy“, die durch die Schnitzeljagd führt, soll den Spielspaß steigern.<br> <br>
-
-All diese Punkte dienen dazu, den Anreiz zu schaffen, die Spatial Tasks auszuführen. Dafür müssen dem Nutzer aber erst einmal die Rätsel entsprechend Problem A zugewiesen werden.<br> <br>
-
-
-Grundsätzlich handelt es sich bei Problem A um ein bekanntes Problem aus der Informatik, einer Range-Query mit dem Radius r um den Punkt p, wobei der Punkt p die Location des Users und die Punkte innerhalb des Radius die Spatial Tasks sind, die in der Reichweite des Users liegen.<br> <br>
-
-Die Intuitive Lösung wäre, die Distanz aller Tasks in der DB zum Spieler zu berechnen und dann die Tasks auszuwählen, deren Distanz kleiner als der Radius ist. Aus diesen Tasks könnte man dann 4 mit hoher Priorität auswählen und zu einer Schnitzeljagd verbinden. Bei wenigen Nutzern und Tasks wäre diese Lösung auch noch vertretbar (lineare Komplexität), doch sollte GeoHunt weltweit gespielt werden, würden viele sinnlose Distanzberechnungen durchgeführt.<br> <br>
-
-Deswegen gibt es bessere algorithmische Ansätze. Organisiert man die Tasks nicht linear, sondern in einer Baumstruktur, kann man sich viele Distanzberechnungen sparen, indem man sich auf einen relevanten Zweig im Baum beschränkt, muss allerdings eine höhere Zeit beim Erstellen eines Tasks aufwenden, da man den Tasks in einen Baum und nicht in eine Liste einfügen muss.<br> <br>
-
-Da man aber davon ausgehen kann, dass jeder Task mehrmals zugewiesen wird (wenn jeder, der einen Task erstellt, dafür 1 mal spielt, werden ihm bereits 4 Tasks zugewiesen) und dass beim Erstellen des Tasks mehr Zeit vorhanden ist als beim Spielen, so ist dieser Nachteil unproblematisch.<br> <br>
-
-Eine weitere Möglichkeit wäre, die Tasks in mehreren Listen abzuspeichern, sodass jeder Task nur in der Liste seiner Stadt steht. Bei der Rätselzuweisung würde dann nur auf die Liste der Stadt, in der sich der Spieler befindet, zugegriffen, in dieser könnte dann wieder linear gesucht werden.<br> <br>
-
-
-
-
-
-
-<br><br><br>
-
-<h4>Technische Umsetzung:</h4><br><br>
-
-<h5>Verwendete Frameworks:</h5>
-<br> 
-<a href="www.nodejs.org">node.js</a> für die Implementierung der Server sowie der javascript-Funktionen <br>
-<a href="www.mongodb.org">mongo DB</a> für die Implementierung der Datenbank <br>
-<a href="www.getbootstrap.com">Bootstrap</a> für Teile der Website <br>
-<a href="www.openlayers.org">openlayer</a> für die Einbindung der Karte<br>
-<a href="www.openstreetmap.org">OpenStreetMap</a> für die Daten der Karte<br><br> <br>
-
-
-<h4>Einbindung der Applikation in die Website:</h4><br>
-
-Eine direkte Einbindung der Applikation in die Dokumentation ist nicht möglich, da die Dokumentation Teil der Webapplikation ist. Deswegen gelangt man hier zum:<br> <br>
-
-Start der Schnitzeljagd(weblink)
-Erstellen eines Tasks(weblink)<br> <br><br>
-
-
-
-<h4>Evaluation gegenüber Baseline:</h4><br>
-
-
-Die Baseline fürs MTA-Problem wäre, einem Nutzer einfach zufällig 5 Tasks aus der Datenbank zuzuweisen. Dabei wäre die Zuweisung in konstantem Zeitaufwand (O(1)) möglich - man müsste einfach fünf zufällige Tasks aus der Datenbank auslesen. Die Wahrscheinlichkeit, dass der Nutzer diese Tasks auch erfüllt, läge aber bei einem verschwindend geringen Prozentsatz: <br> <br>
-
-
-
-
-
-Angenommen, ein Nutzer erfüllt einen zugewiesenen Task, der innerhalb seines Radius liegt mit einer Wahrscheinlichkeit von p = 0.5 , einen Task außerhalb seines Radius jedoch mit einer Wahrscheinlichkeit von 0.01 (da die Tasks über die ganze Welt verteilt auftreten). <br>
-
-Dann wäre die Anzahl erfüllter Tasks, die mit der Nearest Neighbor - Methode zugewiesen wurden, 50 Mal größer als bei einer zufälligen Zuweisung. <br>
-
-Der Nachteil wäre allerdings, dass manche Tasks nur selten oder vielleicht gar nicht zugewiesen und erfüllt würden, weil sie nie innerhalb des Radius eines Spielers lägen. <br> <br>
-
-
-
-Der zeitintensivste Verarbeitungsschritt beim Erstellen einer Schnitzeljagd ist die Suche nach 4 passenden Rätseln. Als Baseline dient hier die lineare Suche auf einer Liste, in der alle Tasks enthalten sind, wobei die ersten 4 passenden Tasks ausgewählt werden. Das erfordert durchschnittlich 0.5 * n Vergleiche, wenn n Tasks in der Datenbank sind. Die Zeitkomplexität hierfür ist O(n).<br> <br>
-
-Das Einfügen neuer Tasks in die lineare Liste wäre in O(1) möglich.<br><br>
-
-Beim in GeoHunt verwendeten QuadTree für die Indizierung der Spatial Tasks beträgen die Laufzeit für die Suche nach den passenden Tasks sowie für das Einfügen eines neuen Tasks in die Baumstruktir O(log n), da beide Fälle auf einen Zweig des Baumes beschränkt sind.
-
-<br>
-
-Da beim Erstellen eines Tasks mehr Zeit vorhanden ist als beim Spielen und da Tasks öfter zugewiesen als erstellt werden (wenn jeder Taskersteller einmal spielt, werden für einen erstellten Task vier Tasks zugewiesen), ist eine höhere Laufzeit beim Einfügen unproblematisch, wenn dafür die Suche nach passenden Tasks optimiert werden kann
-
-
-<br> <br><br>
-
-
-
-
-
-<h4>Downloads:</h4><br>
-Präsentation 1<br>
-Präsentation 2<br>
-SourceCode
-
-<br><br> <br><br> <br>
-
-
-Copyrights by Julia Kinshofer, Benjamin Sauer, Daniel Basaran. 2015
-
-
-        </div>
-
+        <% include includes/header.html%>
+            <div class="jumbotron text-left">
+
+                <h3><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> About:</h3> GeoHunt ist eine Website, die den Nutzern erlaubt, Spatial Tasks zu stellen und gleichzeitig Anreize dafür zu schaffen, sie zu erfüllen. Dafür werden die Spatial Tasks in eine ortsbezogene Schnitzeljagd eingebettet, an der die Nutzer zum eigenen Vergnügen teilnehmen. Beim Erstellen eines Tasks muss gleichzeitig ein Rätsel für die Schnitzeljagd gestellt werden. Möchte ein Nutzer dann eine Schnitzeljagd spielen, stellt GeoHunt ihm Rätsel in seiner Nähe.
+                <br> Hat der Nutzer ein Rätsel gelöst, muss er sich an den angegebenen Ort begeben. Dort wird er dann aufgefordert, ein Video mit der <a href="http://mediaqv3.cloudapp.net/home/">mediaQ - App</a> aufzunehmen (und es bei Abschluss der Schnitzeljagd in die mediaQ-Datenbank zu laden).
+                <br> GeoHunt wurde von Julia Kinshofer(B.Sc.), Benjamin Sauer(B.Sc.) und Daniel Basaran(B.Sc.) im Rahmen des Hauptseminars <a href="http://www.dbs.ifi.lmu.de/cms/Hauptseminar_%22MediaQ%22_WS1415">„MediaQ: Practical Seminar on Big Data for Social Media“</a> von Dr Matthias Renz am <a href="https://www.ifi.lmu.de">Institut für Informatik</a> der <a href="http://www.uni-muenchen.de/index.html">Ludwig-Maximilians-Universität</a> in München entwickelt.
+                <br>
+                <br>
+                <h3><span class="glyphicon glyphicon-book" aria-hidden="true"> Dokumentation:</h3>
+
+                <h4>Motivation:</h4>
+                <br> Im Rahmen des Seminars haben sich die Autoren speziell mit dem Paper <a href="http://dl.acm.org/citation.cfm?id=2424346"> GeoCrowd: Enabling Query Answering with Spatial Crowdsourcing</a> von Leyla Kazemi und Cyrus Shahabi beschäftigt. Dieses Paper bearbeitet die Probleme bei Spatial Crowdsourcing: Wie können Spatial Tasks effizient Usern zugewiesen werden und <strong>wie motiviert man User, Tasks zu erfüllen?</strong>
+                <br>
+                <br> Besondere Probleme bereitet dabei die Tatsache, dass die Erfüllung von Spatial Tasks für den Nutzer immer mit bestimmten Kosten verbunden ist: Er muss zunächst einmal zu dem Ort des Tasks reisen. Deswegen muss zunächst ein ausreichender Anreiz für den User geschaffen werden, den Task erfüllen zu wollen.
+                <br>
+                <br> Des Weiteren dürfen - auch im Rahmen einer Schnitzeljagd - die Wege zu den zugewiesenen Spatial Tasks nicht zu groß werden, da der Spieler sonst die Schnitzeljagd abbrechen würde, weil der Anreiz - der Spielspaß - die Kosten - die lange Wegstrecke - nicht mehr aufwiegen würde.
+                <br>
+                <br>
+
+                <h4><span class="glyphicon glyphicon-flash" aria-hidden="true"> Formale Problemdefinition:</h4>
+                <br> Eines der Kernprobleme ist das Maximum Task Assignment Problem, das sich mit der Frage beschäftigt, wie gewährleistet werden kann, dass die maximale Anzahl an Tasks erfüllt wird.
+                <br>
+                <br> Seien Wi die Nutzer, die gewillt sind Tasks zu erfüllen. Seien Ti die Spatial Tasks, die erfüllt werden müssen. Es gilt dann, eine Funktion F: Ti &rarr; Wj zu finden, sodass die Anzahl der zugewiesenen Tasks Ti maximiert wird.
+                <br>
+                <br> Das alleine reicht jedoch noch nicht, da nicht garantiert werden kann, dass ein zugewiesener Task auch erfüllt wird (weise ich einem Nutzer, der sich in München befindet, einen Task in New York City zu, ist es extrem unwahrscheinlich, dass er ihn erfüllt). Um die Anzahl erfüllter Spatial Tasks zu maximieren, wurden in <a href="http://dl.acm.org/citation.cfm?id=2424346"> GeoCrowd: Enabling Query Answering with Spatial Crowdsourcing</a> diverse Algorithmen vorgeschlagen. Im Rahmen von GeoHunt wurde der Nearest Neighbor-Algorithmus in leicht abgewandelter Form verwendet, da dadurch die Kosten der Anreise für den Spieler minimiert werden, was eine Grundvorraussetzung für den Spielspaß darstellt:
+                <br>
+                <br>
+
+                <div class='well'>
+                    <strong>(A)</strong>
+                    <br>
+                    <br> Sei Pn die Position des Nutzers, der eine Schnitzeljagd spielen will, und r der Radius innerhalb dessen er sich bewegen kann. Seien Ti die Tasks, die noch nicht erfüllt sind. Dann muss dem Nutzer eine Schnitzeljagd zugewiesen werden, sodass gilt: Tj (0 &lt; j &lt; 5) aus Ti mit dist(Tj, Pn) &lt; r und T4 muss in der Nähe eines WiFi-Hotspots liegen.
+                    <br>
+                    <br>
+                    <br> <strong>(B)</strong>
+                    <br>
+                    <br> Generell muss dem Nutzer ein Anreiz A gegeben werden, den Spatial Task auszuführen, d.h. die Kosten K der Reise an den Ort des Tasks auf sich nehmen. D.h. Ai &gt; Ki für alle Spatial Tasks.
+                </div>
+                <br>
+
+                <h4><span class="glyphicon glyphicon-unchecked" aria-hidden="true"> Algorithmische Lösung:</h4>
+                <br> Problem B kann nicht direkt algorithmisch gelöst werden, dennoch stellt das Schaffen geeigneter Anreize für das Erfüllen der Spatial Tasks den Kernpunkt der Arbeit der Autoren dar. Wie kann man jemandem einen Anreiz geben, an irgendeinen Ort zu fahren und dort ein Video mit der mediaQ-App aufzuzeichnen?
+                <br>
+                <br> Nach einigem Überlegen haben sich die Autoren entschieden, die Spatial Tasks in ein Spiel einzubinden, da bei Spielen das Gewinnen bzw. das Spielen selbst Anreiz genug ist, Anweisungen auszuführen. Hierfür bot sich eine Schnitzeljagd an, bei der man von Ort zu Ort reisen muss, um irgendwann zu gewinnen. Dementsprechend wurde GeoHunt entwickelt. Wie bei traditionellen Schnitzeljagden muss der Spieler Rätsel lösen, die mit dem Ort des Spatial Tasks verbunden sind. Dann muss er an den Ort reisen und ein Video mit der MediaQ-App aufnehmen, um anschließend das nächste Rätsel zu lösen.
+                <br>
+                <br> Hierbei ergeben sich natürlich einige Probleme, das wichtigste ist die Erstellung des Rätsels. Es existiert keine AI, die ein Rätsel für eine Schnitzeljagd erstellen kann. Deswegen haben die Autoren sich entschieden, die Rätsel vom Taskersteller selbst stellen zu lassen. Wichtig ist hierbei, dass die Rätsel (mit Hilfe einer Websuche) lösbar sind und dass man dabei auch etwas lernt, z.B. über die Geschichte eines Points of Interest, von dem das Video erstellt werden soll.
+                <br>
+                <br> Dieses Lernen bietet dann auch einen zusätzlichen Anreiz, sich an GeoHunt zu beteiligen. Vor allem Schulklassen könnten die Schnitzeljagden mit Schulausflügen verbinden, bei denen sie etwas über die Geschichte ihrer Heimatstadt lernen und dann mehrere Videos eines Point of Interest aus verschiedenen Perspektiven in die mediaQ-Datenbank hochladen.
+                <br>
+                <br> Damit ein Spiel Spaß macht, muss es einfach zu bedienen sein und eine ansprechende, wenn möglich lustige Oberfläche haben. Deshalb haben die Autoren den Schwerpunkt ihrer Arbeit auf die Präsentation des Spiels gelegt, die Bedienung soll interaktiv sein und die Website schön gestaltet. Die Einführung der Figur "Hunter Hickinbottom McGreedy“, die durch die Schnitzeljagd führt, soll den Spielspaß steigern.
+                <br>
+                <br> All diese Punkte dienen dazu, den Anreiz zu schaffen, die Spatial Tasks auszuführen. Dafür müssen dem Nutzer aber erst einmal die Rätsel entsprechend Problem A zugewiesen werden.
+                <br>
+                <br> Grundsätzlich handelt es sich bei Problem A um ein bekanntes Problem aus der Informatik, einer Range-Query mit dem Radius r um den Punkt p, wobei der Punkt p die Location des Users und die Punkte innerhalb des Radius die Spatial Tasks sind, die in der Reichweite des Users liegen.
+                <br>
+                <br> Die Intuitive Lösung wäre, die Distanz aller Tasks in der DB zum Spieler zu berechnen und dann die Tasks auszuwählen, deren Distanz kleiner als der Radius ist. Aus diesen Tasks könnte man dann 4 mit hoher Priorität auswählen und zu einer Schnitzeljagd verbinden. Bei wenigen Nutzern und Tasks wäre diese Lösung auch noch vertretbar (lineare Komplexität), doch sollte GeoHunt weltweit gespielt werden, würden viele sinnlose Distanzberechnungen durchgeführt.
+                <br>
+                <br> Deswegen gibt es bessere algorithmische Ansätze. Organisiert man die Tasks nicht linear, sondern in einer Baumstruktur, kann man sich viele Distanzberechnungen sparen, indem man sich auf einen relevanten Zweig im Baum beschränkt, muss allerdings eine höhere Zeit beim Erstellen eines Tasks aufwenden, da man den Tasks in einen Baum und nicht in eine Liste einfügen muss.
+                <br>
+                <br> Da man aber davon ausgehen kann, dass jeder Task mehrmals zugewiesen wird (wenn jeder, der einen Task erstellt, dafür 1 mal spielt, werden ihm bereits 4 Tasks zugewiesen) und dass beim Erstellen des Tasks mehr Zeit vorhanden ist als beim Spielen, so ist dieser Nachteil unproblematisch.
+                <br>
+                <br> Eine weitere Möglichkeit wäre, die Tasks in mehreren Listen abzuspeichern, sodass jeder Task nur in der Liste seiner Stadt steht. Bei der Rätselzuweisung würde dann nur auf die Liste der Stadt, in der sich der Spieler befindet, zugegriffen, in dieser könnte dann wieder linear gesucht werden.
+                <br>
+                <br>
+                <br>
+                <h4><span class="glyphicon glyphicon-cog" aria-hidden="true"> Technische Umsetzung:</h4>
+                <br>
+                <h4>Verwendete Frameworks:</h4>
+                <br>
+                <a href="www.nodejs.org">node.js</a> für die Implementierung der Server sowie der javascript-Funktionen
+                <br>
+                <a href="www.mongodb.org">mongo DB</a> für die Implementierung der Datenbank
+                <br>
+                <a href="www.getbootstrap.com">Bootstrap</a> für Teile der Website
+                <br>
+                <a href="www.openlayers.org">openlayer</a> für die Einbindung der Karte
+                <br>
+                <a href="www.openstreetmap.org">OpenStreetMap</a> für die Daten der Karte
+                <br>
+                <br>
+                <br>
+
+
+                <h4>Einbindung der Applikation in die Website:</h4>
+                <br> Eine direkte Einbindung der Applikation in die Dokumentation ist nicht möglich, da die Dokumentation Teil der Webapplikation ist. Deswegen gelangt man hier zum:
+                <br>
+                <br> Start der Schnitzeljagd(weblink) Erstellen eines Tasks(weblink)
+                <br>
+                <br>
+                <br>
+
+
+
+                <h4>Evaluation gegenüber Baseline:</h4>
+                <br> Die Baseline fürs MTA-Problem wäre, einem Nutzer einfach zufällig 5 Tasks aus der Datenbank zuzuweisen. Dabei wäre die Zuweisung in konstantem Zeitaufwand (O(1)) möglich - man müsste einfach fünf zufällige Tasks aus der Datenbank auslesen. Die Wahrscheinlichkeit, dass der Nutzer diese Tasks auch erfüllt, läge aber bei einem verschwindend geringen Prozentsatz:
+                <br>
+                <br> Angenommen, ein Nutzer erfüllt einen zugewiesenen Task, der innerhalb seines Radius liegt mit einer Wahrscheinlichkeit von p = 0.5 , einen Task außerhalb seines Radius jedoch mit einer Wahrscheinlichkeit von 0.01 (da die Tasks über die ganze Welt verteilt auftreten).
+                <br> Dann wäre die Anzahl erfüllter Tasks, die mit der Nearest Neighbor - Methode zugewiesen wurden, 50 Mal größer als bei einer zufälligen Zuweisung.
+                <br> Der Nachteil wäre allerdings, dass manche Tasks nur selten oder vielleicht gar nicht zugewiesen und erfüllt würden, weil sie nie innerhalb des Radius eines Spielers lägen.
+                <br>
+                <br> Der zeitintensivste Verarbeitungsschritt beim Erstellen einer Schnitzeljagd ist die Suche nach 4 passenden Rätseln. Als Baseline dient hier die lineare Suche auf einer Liste, in der alle Tasks enthalten sind, wobei die ersten 4 passenden Tasks ausgewählt werden. Das erfordert durchschnittlich 0.5 * n Vergleiche, wenn n Tasks in der Datenbank sind. Die Zeitkomplexität hierfür ist O(n).
+                <br>
+                <br> Das Einfügen neuer Tasks in die lineare Liste wäre in O(1) möglich.
+                <br>
+                <br> Beim in GeoHunt verwendeten QuadTree für die Indizierung der Spatial Tasks beträgen die Laufzeit für die Suche nach den passenden Tasks sowie für das Einfügen eines neuen Tasks in die Baumstruktir O(log n), da beide Fälle auf einen Zweig des Baumes beschränkt sind.
+
+                <br> Da beim Erstellen eines Tasks mehr Zeit vorhanden ist als beim Spielen und da Tasks öfter zugewiesen als erstellt werden (wenn jeder Taskersteller einmal spielt, werden für einen erstellten Task vier Tasks zugewiesen), ist eine höhere Laufzeit beim Einfügen unproblematisch, wenn dafür die Suche nach passenden Tasks optimiert werden kann
+                <br>
+                <h4>Downloads:</h4>
+                <br> Präsentation 1
+                <br> Präsentation 2
+                <br> SourceCode
+                <br>
+                <br>
+                <br> Copyrights by Julia Kinshofer, Benjamin Sauer, Daniel Basaran. 2015
+
+            </div>
+            <% include includes/foot.html %>
+    </div>
+    </div>
     </div>
     <!-- /container -->
-
 </body>
 
 </html>

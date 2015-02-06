@@ -11,70 +11,87 @@
     <div class="container">
         <% include includes/header.html%>
             <div class="alert alert-success row" role="alert" hidden></div>
-             <div class="alert alert-warning row" role="alert" hidden></div>
+            <div class="alert alert-warning row" role="alert" hidden></div>
             <div class="jumbotron">
                 <div id="map" class="map"></div>
             </div>
 
 
-            <div class="row marketing">
+            <div class="row marketing well">
                 <div class="col-lg-6">
-                    <div id="mouse-position">Location:</div>
-                    <p>Task Name:
-                        <input id="taskName" name="taskName" type="text" size="30" maxlength="30">
-                    </p>
-                    <p class="longlat">
-                        <span>Längengrad:&nbsp;</span>
-                        <input id="lon" type="text"> </p>
-                    <p class="longlat">
-                        <span>Breitengrad:&nbsp; </span>
-                        <input id="lat" type="text">
-                    </p>
-                </div>
-
-                <div class="col-lg-6">
-                    <div class="riddle">Rätsel:
-                        <textarea id='riddleText' rows="5"></textarea>
+                    <div id="mouse-position" class='well'><strong>Location:</strong>
                     </div>
-                    <div class="riddle">Hinweis 1:
-                        <textarea id='hint1' rows="5"></textarea>
+                    <div class="form-group ">
+                        <label for="taskName">Task Name:</label>
+                        <input id="taskName" class="form-control" name="taskName" placeholder="Task Name" type="text" size="30" maxlength="30">
                     </div>
-                    <div class="riddle">Hinweis 2:
-                        <textarea id='hint2' rows="5"></textarea>
+                    <div class="form-group ">
+                        <label for="lon">Längengrad:</label>
+                        <input id="lon" class="form-control" placeholder="Längengrad" type="text">
                     </div>
-
-
-                    <div class="submit">
-                        <input id="submitButton" type="submit" value="Submit"></input>
+                    <div class="form-group ">
+                        <label for="lat">Breitengrad:</label>
+                        <input id="lat" class="form-control" placeholder="Breitengrad:" type="text">
                     </div>
                 </div>
+                <div class="col-lg-6">
+                    <div class="form-group ">
+                        <label for="riddleText">Rätsel:</label>
+                        <textarea id='riddleText' class="form-control" placeholder="Rätseltext" rows="3"></textarea>
+                    </div>
+                    <div class="form-group ">
+                        <label for="hint1">Hinweis 1:</label>
+                        <textarea id='hint1' class="form-control" placeholder="Hinweis 1" rows="3"></textarea>
+                    </div>
+                    <div class="form-group ">
+                        <label for="hint2">Hinweis 2:</label>
+                        <textarea id='hint2' class="form-control" placeholder="Hinweis 2" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-lg-offset-4">
+                    <input id="submitButton" class="btn btn-lg btn-primary btn-block" type="submit" value="Submit"></input>
+                </div>
+
             </div>
-
-
-
-
             </form>
-            </br>
-            </br>
-            </br>
             <div>
-                <h3>Hinweise zum Task erstellen: </h3> Stelle sicher, dass man die Informationen mit einer Websuche finden kann.</br>
-                Stelle sicher, dass das Rätsel nicht zu komplex oder zu einfach ist. Wenn niemand das Rätsel lösen kann, wird der Task nicht erfüllt.</br> Wenn möglich, versuche das Rätsel so zu stellen, dass man etwas dabei lernt. </br>
-                </br>
-                </br>
-                <h3>Beispielrätsel: </h3> Rätsel: Ich wusste noch gar nicht, dass man im alten China so gutes Bier trinken konnte... </br>
-                Hinweis#1: Die grüne Lunge Münchens ist eine Oase der Ruhe für viele Münchner.</br>
-                Hinweis#2: Bier erhält man hier nur an neun Monaten im Jahr. Dafür an einem weiteren Glühwein.</br>
-                Lösung: Biergarten Chinesischer Turm im Englischen Garten
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"> Hinweise zum Erstellen von Tasks: </h3>
+                    </div>
+                    <div class="panel-body">
+                        <ul class="list-group">
+                            <li class="list-group-item">Stelle sicher, dass man die Informationen mit einer Websuche finden kann.</li>
+                            <li class="list-group-item">Stelle sicher, dass das Rätsel nicht zu komplex oder zu einfach ist. </li>
+                            <li class="list-group-item">Ziel ist es möglichst viele Tasks zu erledigen und dabei Spaß zu haben!</li>
+                            <li class="list-group-item">Wenn möglich, versuche das Rätsel so zu stellen, dass man etwas dabei lernt.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><strong>Beispielrätsel:</strong></h3>
+                    </div>
+                    <div class="panel-body">
+                        <ul class="list-group">
+                            <li class="list-group-item"><strong>Rätsel:</strong> Ich wusste noch gar nicht, dass man im alten China so gutes Bier trinken konnte... </li>
+                            <li class="list-group-item"><strong>Hinweis#1:</strong> Die grüne Lunge Münchens ist eine Oase der Ruhe für viele Münchner.</li>
+                            <li class="list-group-item"><strong>Hinweis#2:</strong> Bier erhält man hier nur an neun Monaten im Jahr. Dafür an einem weiteren Glühwein.</li>
+                            <li class="list-group-item"><strong>Lösung:</strong> Biergarten Chinesischer Turm im Englischen Garten</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
-
             <% include includes/foot.html %>
-
     </div>
-    <!-- /container -->
-    <script src="/javascripts/ol.js" type="text/javascript"></script>
-    <script src="/bower_components/jquery/dist/jquery.min.js" type="text/javascript"></script>
-    <script src="/javascripts/map.js" type="text/javascript"></script>
+
+
+        </div>
+        <!-- /container -->
+        <script src="/javascripts/ol.js" type="text/javascript"></script>
+        <script src="/bower_components/jquery/dist/jquery.min.js" type="text/javascript"></script>
+        <script src="/javascripts/map.js" type="text/javascript"></script>
 </body>
 
 </html>
