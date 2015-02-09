@@ -7,7 +7,7 @@ If needed (at the moment the default setting) mediaQuery automatically creates a
 Installation:
 
 1. Install [nodejs](http://nodejs.org/)
-2. checkout git from ```https://github.com/BenSower/mediaquery.git```
+2. clone the git from ```https://github.com/BenSower/mediaquery.git```
 3. Open a console/terminal/shell and enter git directory
 4. run ```npm install``` to download and install all necessary dependencies 
 5. Fill in all needed information in config.js
