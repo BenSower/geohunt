@@ -6,22 +6,16 @@ If needed (at the moment the default setting) mediaQuery automatically creates a
 
 Installation:
 
-1. Install [nodejs](http://nodejs.org/)
-2. clone the git from ```https://github.com/BenSower/mediaquery.git```
-3. Open a console/terminal/shell and enter git directory
-4. run ```npm install``` to download and install all necessary dependencies 
+1. Install [nodejs](http://nodejs.org/) and a local version of [mongodb](http://www.mongodb.org/) 
+2. checkout git from ```https://github.com/BenSower/geohunt.git```
+3. Open a console/terminal/shell and enter the geohunt directory
+4. run ```npm install``` to download and install all necessary backend dependencies 
+5. run ```node node_modules/bower/bin/bower install``` to download and install all necessary frontend dependencies 
+(hint, since this command was also added to the postinstall-scripts in package.json, services like heroku will execute this command automatically)
 5. Fill in all needed information in config.js
 6. run ```npm start```
-7. check http://localhost:3000 if you can see something like "Mediaquery v 1.0"
-8. stop the server (e.g. by pressing "ctrl + c" in the terminal/console
-9. run ```node backend/main.js```
-This will create an output similar to this one
-```
-Creating ssh tunnel to remote.cip.ifi.lmu.de
-Connection not yet established, waiting and trying again. Attempt :1/10
-Tunnel connected
-Trying to connect to Mysql DB...
-Connected to Mysql DB on mediaq.dbs.ifi.lmu.de
-Current number of uploaded videos is: 129
-```
-(at the moment, mediaQuery only prints the number of unique, uploaded videos in the MySQL database to the console)
+7. check http://localhost:3000 if you can see the welcome screen
+
+
+
+If you want to, you can also insert a few example tasks to the db by executing ```node backend/insertBasicTasks.js```
