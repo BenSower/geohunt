@@ -2,7 +2,7 @@ mediaQuery
 ==========
 A very basic nodejs-project used to query the MySQL-DB of a MediaQ server [for more info click here](http://mediaqv3.cloudapp.net/MediaQ_MVC_V3/).
 
-If needed (at the moment the default setting) mediaQuery automatically creates a SSH tunnel to allow the client to bypass network restrictions without the need of an external tunnel. This is necessary to cope with the good practice of "hiding" a database from the web.
+ATTENTION: At the moment the user password-hashes used to store in a db are not being salted...
 
 Installation:
 
