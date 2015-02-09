@@ -5,6 +5,7 @@ var passport = require('passport'),
     MongoClient = require('mongodb').MongoClient,
     ObjectID = require('mongodb').ObjectID,
     config = require('../config'),
+    crypto = require('crypto'),
     mongoUrl = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || config.mongodb.mongoUrl;
 
 function findById(id, fn) {
@@ -93,7 +94,7 @@ PassportHelper.authenticate = new LocalStrategy(
                     message: 'Unknown user ' + username
                 });
             }
-            if (user.password != password) {
+            if (user.password !== getSha1OfString(password)) {
                 console.log('Password wrong');
                 return done(null, false, {
                     message: 'Invalid password'
@@ -105,7 +106,12 @@ PassportHelper.authenticate = new LocalStrategy(
     }
 );
 
-
+function getSha1OfString(string) {
+    var hash = crypto.createHash('sha1')
+        .update(string)
+        .digest('hex');
+    return hash.toString();
+}
 
 
 module.exports = PassportHelper;

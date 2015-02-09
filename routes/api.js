@@ -3,6 +3,7 @@ var MongoClient = require('mongodb').MongoClient,
     config = require('../config'),
     express = require('express'),
     async = require('async'),
+    crypto = require('crypto'),
     ObjectID = require('mongodb').ObjectID,
     mongoUrl = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || config.mongodb.mongoUrl,
     router = express.Router(),
@@ -52,7 +53,12 @@ router.post('/task/create', function(req, res) {
     });
 });
 
-
+function getSha1OfString(string) {
+    var hash = crypto.createHash('sha1')
+        .update(string)
+        .digest('hex');
+    return hash.toString();
+}
 router.post('/register', function(req, res) {
     console.log('registering new user: ' + req.body.username);
     MongoClient.connect(mongoUrl, function(err, db) {
@@ -66,9 +72,11 @@ router.post('/register', function(req, res) {
             if (err) {
                 console.log(err);
             } else {
+                var hash = getSha1OfString(req.body.password);
+
                 var user = {
                     username: req.body.username,
-                    password: req.body.password,
+                    password: hash,
                     tasksCompleted: [],
                     activeGame: null
                 };

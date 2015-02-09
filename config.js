@@ -2,8 +2,8 @@ module.exports = {
     database: {
         host: 'mediaq.dbs.ifi.lmu.de',
         port: 3306,
-        user: null,
-        password: null,
+        user: 'student',
+        password: '***REMOVED***',
         database: 'MediaQ_V2'
     },
     sessionSecret: 'flkdfkföldrfkö',
